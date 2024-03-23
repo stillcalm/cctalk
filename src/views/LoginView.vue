@@ -22,6 +22,14 @@
           />
         </div>
         <div class="m-form-group login-error"></div>
+        <div class="option">
+          <div class="m-from-small-group">
+            <el-checkbox v-model="checked1" label="同意并遵守隐私协议" size="small" text-color="#0056ff"/>
+          </div>
+          <div class="m-from-small-group">
+            <el-checkbox v-model="checked2" label="15天免登录" size="small" />
+          </div>
+        </div>
         <div class="m-form-group">
           <el-button class="m-btn" type="primary" @click="handleClick"
             >登 录</el-button
@@ -39,13 +47,16 @@
       </div>
     </div>
   </div>
-  <div class="g-doc m-foot"></div>
+  <div class="g-doc m-foot">© 2024-2024</div>
 </template>
 
 <script setup>
-/* import {ref, reactive } from "vue"; */
+import { ref } from "vue";
 import { Lock, User } from "@element-plus/icons-vue";
 import router from "../router";
+
+const checked1 = ref(false);
+const checked2 = ref(false);
 function handleClick() {
   console.log("登录成功");
   router.push({ path: "/home" });
@@ -99,6 +110,10 @@ function handleClick() {
 .m-form-group {
   margin: 15px 0;
 }
+.m-from-small-group {
+  padding-left: 5px;
+  text-align: left;
+}
 .m-input {
   width: 320px;
   height: 50px;
@@ -122,5 +137,9 @@ function handleClick() {
 }
 .m-foot {
   color: #999999;
+}
+a,
+a:hover {
+  color: #0056ff;
 }
 </style>

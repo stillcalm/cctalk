@@ -8,22 +8,40 @@ const routes = [
   },{
     path: '/home',
     name: 'home',
-    component: () => import(/* webpackChunkName: "about" */ '../views/HomeView.vue')
+    component: () => import('../views/HomeView.vue'),
+    children: [
+      {
+        path: '/home/chat',
+        name: 'chat',
+        component: () => import('../views/ChatView.vue'),
+        children: [
+          {
+            path: '/home/chat/contact',
+            name: 'contact',
+            component: () => import('../components/contactList/ContactList.vue'),
+          }
+        ]
+      },{
+        path: '/home/contact',
+        name: 'contact',
+        component: () => import('../views/ContactView.vue'),
+        children: [
+          {
+            path: '/home/chat/friend',
+            name: 'friend',
+            component: () => import('../components/friendList/FriendList.vue'),
+          }
+        ]
+      }
+    ]
   },{
     path: '/login',
     name: 'login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
+    component: () => import('../views/LoginView.vue')
   },{
     path: '/register',
     name: 'register',
-    component: () => import(/* webpackChunkName: "about" */ '../views/RegisterView.vue')
-  },{
-    path: '/chat',
-    name: 'chat',
-    component: () => import(/* webpackChunkName: "about" */ '../views/ChatView.vue')
+    component: () => import('../views/RegisterView.vue')
   }
 ]
 
