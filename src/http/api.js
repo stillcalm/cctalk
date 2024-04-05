@@ -1,17 +1,16 @@
-import serviceAxios from "../index";
+import serviceAxios from "./index";
 
-
-exports.getUserInfo = (params) => {
+export const getUserInfo = (params) => {
   return serviceAxios({
-    url: "/api/website/queryMenuWebsite",
+    url: "/website/queryMenuWebsite",
     method: "post",
     params,
   });
 };
 
-exports.login = (data) => {
+export const login = (data) => {
   return serviceAxios({
-    url: "/api/user/login",
+    url: "/users/login",
     method: "post",
     data,
   });

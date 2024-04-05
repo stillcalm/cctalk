@@ -6,7 +6,7 @@ import qs from "qs";
 // 创建 axios 请求实例
 const serviceAxios = axios.create({
   baseURL: serverConfig.baseURL, // 基础请求地址
-  timeout: 10000, // 请求超时设置
+  timeout: serverConfig.timeout, // 请求超时设置
   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
 
@@ -95,4 +95,5 @@ serviceAxios.interceptors.response.use(
     return Promise.reject(message);
   }
 );
+
 export default serviceAxios;

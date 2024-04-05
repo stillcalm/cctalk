@@ -10,7 +10,8 @@
               placeholder="搜索好友或群组"
               :suffix-icon="Search"
             />
-            <el-dropdown @command="handleCommand">
+            <!-- @command="handleCommand" -->
+            <el-dropdown>
               <el-button class="top-search">
                 <el-icon><Plus /></el-icon>
               </el-button>
@@ -69,12 +70,14 @@
     </div>
   </div>
 
+  <!-- confirm logout -->
   <el-dialog
     v-model="confirmLogout"
     title="提示"
     width="500"
     draggable
     overflow
+    plain
   >
     <span>是否要退出</span>
     <template #footer>
@@ -87,10 +90,13 @@
     </template>
   </el-dialog>
 
+  <!-- user info -->
   <el-dialog
     v-model="userInfoVisible"
     :show-close="false"
     width="350px"
+    :modal="false"
+    plain
     draggable
     overflow
   >
@@ -102,26 +108,38 @@
 
     <el-form :model="form">
       <el-form-item label="账号" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" disabled/>
+        <el-input v-model="form.name" autocomplete="off" disabled />
       </el-form-item>
       <el-form-item label="昵称" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" />
+        <el-input v-model="form.nickName" autocomplete="off" />
       </el-form-item>
-        <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-select v-model="form.region" placeholder="请选择性别">
+      <el-form-item label="性别" :label-width="formLabelWidth">
+        <el-select v-model="form.gender" placeholder="请选择性别">
           <el-option label="未知" value="other" />
           <el-option label="男" value="male" />
           <el-option label="女" value="female" />
         </el-select>
       </el-form-item>
       <el-form-item label="手机" :label-width="formLabelWidth">
-        <el-input v-model="form.name" placeholder="请输入手机号" autocomplete="off" />
+        <el-input
+          v-model="form.phone"
+          placeholder="请输入手机号"
+          autocomplete="off"
+        />
       </el-form-item>
       <el-form-item label="邮箱" :label-width="formLabelWidth">
-        <el-input v-model="form.name" placeholder="请输入邮箱" autocomplete="off" />
+        <el-input
+          v-model="form.email"
+          placeholder="请输入邮箱"
+          autocomplete="off"
+        />
       </el-form-item>
       <el-form-item label="签名" :label-width="formLabelWidth">
-        <el-input v-model="form.name" placeholder="请输入签名" autocomplete="off" />
+        <el-input
+          v-model="form.signature"
+          placeholder="请输入签名"
+          autocomplete="off"
+        />
       </el-form-item>
     </el-form>
 
@@ -132,37 +150,13 @@
       </el-button>
     </template>
   </el-dialog>
-  <!--   <el-dialog
-    v-model="userInfoVisible"
-    title="提示"
-    width="500"
-    :modal="false"
-    draggable
-    overflow
-  >
-    <span>信息</span>
-    <template #header="{ close, titleId, titleClass }">
-      <div class="my-header">
-        <h4 :id="titleId" :class="titleClass">This is a custom header!</h4>
-        <el-button type="danger" @click="close">
-          <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
-          Close
-        </el-button>
-      </div>
-    </template>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="userInfoVisible = false">取消</el-button>
-        <el-button type="primary" @click="(userInfoVisible = false)">
-          保存
-        </el-button>
-      </div>
-    </template>
-  </el-dialog> -->
+
+  
+
 </template>
 
 <script setup>
-import { ref,reactive } from "vue";
+import { ref, reactive } from "vue";
 import router from "../router";
 import ChatView from "./ChatView.vue";
 import ContactView from "./ContactView.vue";
@@ -189,21 +183,20 @@ const handleSelect = (key) => {
 };
 
 const form = reactive({
-  name: '',
-  region: '',
-  date1: '',
-  date2: '',
+  name: "",
+  region: "",
+  date1: "",
+  date2: "",
   delivery: false,
   type: [],
-  resource: '',
-  desc: '',
-})
+  resource: "",
+  desc: "",
+});
 
 const logOut = () => {
   console.log("退出");
   router.replace({ path: "/login" });
 };
-
 </script>
 
 <style scoped>

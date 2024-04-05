@@ -6,14 +6,14 @@ const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
 module.exports = defineConfig({
   transpileDependencies: true,
   chainWebpack: (config) => {
-    config.plugin('define').tap((definitions) => {
+    config.plugin("define").tap((definitions) => {
       Object.assign(definitions[0], {
-        __VUE_OPTIONS_API__: 'true',
-        __VUE_PROD_DEVTOOLS__: 'false',
-        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false'
-      })
-      return definitions
-    })
+        __VUE_OPTIONS_API__: "true",
+        __VUE_PROD_DEVTOOLS__: "false",
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
+      });
+      return definitions;
+    });
   },
   css: {
     loaderOptions: {
@@ -26,6 +26,9 @@ module.exports = defineConfig({
   },
   devServer: {
     hot: true,
+    client: {
+      overlay: false
+    }
   },
   configureWebpack: {
     plugins: [

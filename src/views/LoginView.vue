@@ -1,9 +1,8 @@
 <template>
   <div class="g-doc m-head">
     <div class="head-nav">
-      <a href=# class="logo" title="CCtalk"></a>      
+      <a href="#" class="logo" title="CCtalk"></a>
     </div>
-
   </div>
   <div class="g-doc m-body">
     <div class="login-container">
@@ -12,7 +11,7 @@
         <div class="m-desc"></div>
         <div class="m-form-group">
           <el-input
-            v-model="userName"
+            v-model="info.userName"
             class="m-input"
             placeholder="CCtalk账号登录"
             :prefix-icon="User"
@@ -20,24 +19,33 @@
         </div>
         <div class="m-form-group">
           <el-input
-            v-model="password"
+            v-model="info.password"
             class="m-input"
             placeholder="登录密码"
             :prefix-icon="Lock"
             show-password
           />
         </div>
-        <div class="m-form-group login-error"></div>
+        <div class="m-form-group login-error">
+          <div v-if="errorMessage.value" class="el-form-item__error">
+            {{ errorMessage.value }}
+          </div>
+        </div>
         <div class="option">
           <div class="m-from-small-group">
-            <el-checkbox v-model="checked1" label="同意并遵守隐私协议" size="small" text-color="#0056ff"/>
+            <el-checkbox
+              v-model="checked1"
+              label="同意并遵守隐私协议"
+              size="small"
+              text-color="#0056ff"
+            />
           </div>
           <div class="m-from-small-group">
             <el-checkbox v-model="checked2" label="15天免登录" size="small" />
           </div>
         </div>
         <div class="m-form-group">
-          <el-button class="m-btn" type="primary" @click="handleClick"
+          <el-button class="m-btn" type="primary" @click="handleLogin"
             >登 录</el-button
           >
         </div>
@@ -57,23 +65,67 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { Lock, User } from "@element-plus/icons-vue";
 import router from "../router";
+import { login } from "../http/api";
+
+/* import { login } from "../http/api"; */
 
 const checked1 = ref(false);
 const checked2 = ref(false);
+const errorMessage = ref(0);
 
-let userName = ref("");
-let password = ref("");
-function handleClick() {
-  console.log("登录成功");
-  router.push({ path: "/home" });
+const info = reactive({
+  userName: "",
+  password: "",
+});
+
+function handleLogin() {
+  login({
+    username: info.userName,
+    password_hash: info.password,
+  }).then((res) => {
+/*     console.log(res);
+    console.log(res.data); */
+    if (res.status === 200) {
+      localStorage.setItem("token", res.data.token);
+      router.push({ path: "/home" });
+    }
+  });
+  /*  try {
+    const response = axios.post("http://localhost:3000/api/users/login", {
+      username: info.userName,
+      password_hash: info.password,
+    });
+
+    if (response.data.status === 200) {
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.userId);
+      console.log(response.data);
+      router.push({ path: "/home" });
+    } else {
+      // 登录失败的处理逻辑，例如显示错误消息
+      // errorMessage.value = "登录失败，请检查用户名和密码";
+      console.log("fail");
+      errorMessage.value = "登录失败，请检查用户名和密码";
+    }
+  } catch (error) {
+    console.error(error);
+    errorMessage.value = "登录失败，请检查用户名和密码";
+  } */
 }
+
+/* onMounted(() => {
+  const store = useStore();
+  const token = localStorage.getItem("token");
+  if (token) {
+    router.push({ path: "/home" });
+  }
+}); */
 </script>
 
 <style lang="less" scoped>
-
 .g-doc {
   min-width: 1200px;
   max-width: 1920px;
@@ -95,13 +147,13 @@ function handleClick() {
   width: 1200px;
   height: 100%;
   padding: 0 20px;
-
 }
-.logo{
+.logo {
   width: 170px;
   height: 70px;
   display: block;
-  background: url(https://n1image.hjfile.cn/res7/2020/07/27/0725865d1a73294452a9314747e87dc9.png) 0 no-repeat;
+  background: url(https://n1image.hjfile.cn/res7/2020/07/27/0725865d1a73294452a9314747e87dc9.png)
+    0 no-repeat;
   background-size: contain;
   text-indent: -9999px;
   margin-right: 40px;

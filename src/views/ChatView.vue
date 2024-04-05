@@ -4,13 +4,6 @@
       <ChatList @handleChatClick="FatherClick"></ChatList>
     </el-aside>
     <el-container v-if="current">
-      <!--       <div
-        v-for="chat in chatsInfo"
-        :key="chat.uuid"
-        v-show="current === chat.uuid"
-      >
-        {{ chat.message }}
-      </div> -->
       <el-container
         class="bgc"
         v-for="chat in chatsInfo"
@@ -44,7 +37,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item command="a">举报</el-dropdown-item>
                 <el-dropdown-item command="b">删除好友</el-dropdown-item>
-                <el-dropdown-item command="c">移至黑名单</el-dropdown-item>
+  <!--               <el-dropdown-item command="c">移至黑名单</el-dropdown-item> -->
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -55,6 +48,63 @@
       <div>Welcome</div>
     </el-container>
   </el-container>
+
+  <el-dialog
+    v-model="reportDialogVisible"
+    title="举报"
+    width="500"
+    :modal="false"
+    draggable
+    append-to-body
+  >
+    <span>确定要举报吗</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          确定
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog
+    v-model="deleteDialogVisible"
+    title="删除好友"
+    width="400"
+    :modal="false"
+    draggable
+    append-to-body
+  >
+    <span>删除后你将从对方联系人列表中消失，且以后不再接收此人的会话消息</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          确定
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog
+    v-model="blacklistDialogVisible"
+    title="移至黑名单"
+    width="500"
+    :modal="false"
+    draggable
+    append-to-body
+  >
+    <span>你确定将以下联系人移至黑名单吗？</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          确定
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -62,16 +112,30 @@
 import { ref, reactive } from "vue";
 import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
 
-const message = ref("");
-
 /* let client = mqtt.connect("ws://localhost", );
 const published = client.publish("test", "hello", { qos: 1, retain: true }); */
 
+const message = ref("");
 const current = ref();
+const reportDialogVisible = ref(false);
+const deleteDialogVisible = ref(false);
+const blacklistDialogVisible = ref(false);
 
 const FatherClick = (val) => {
   current.value = val;
   //console.log(currentUUID.value);
+};
+
+const handleCommand = (command) => {
+  if (command === "a") {
+    reportDialogVisible.value = !reportDialogVisible.value;
+  }
+  if (command === "b") {
+    deleteDialogVisible.value = !deleteDialogVisible.value;
+  }
+  if (command === "c") {
+    blacklistDialogVisible.value = !blacklistDialogVisible.value;
+  }
 };
 
 const chatsInfo = reactive([
