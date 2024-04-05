@@ -1,24 +1,30 @@
 <template>
-  <div class="g-doc m-head"></div>
+  <div class="g-doc m-head">
+    <div class="head-nav">
+      <a href=# class="logo" title="CCtalk"></a>      
+    </div>
+
+  </div>
   <div class="g-doc m-body">
     <div class="login-container">
       <div class="login-form">
-        <h2 class="title">登录</h2>
+        <h2 class="title">CCtalk 登录</h2>
         <div class="m-desc"></div>
         <div class="m-form-group">
           <el-input
-            v-model="input2"
+            v-model="userName"
             class="m-input"
-            placeholder="UU通信账号登录"
+            placeholder="CCtalk账号登录"
             :prefix-icon="User"
           />
         </div>
         <div class="m-form-group">
           <el-input
-            v-model="input2"
+            v-model="password"
             class="m-input"
             placeholder="登录密码"
             :prefix-icon="Lock"
+            show-password
           />
         </div>
         <div class="m-form-group login-error"></div>
@@ -57,6 +63,9 @@ import router from "../router";
 
 const checked1 = ref(false);
 const checked2 = ref(false);
+
+let userName = ref("");
+let password = ref("");
 function handleClick() {
   console.log("登录成功");
   router.push({ path: "/home" });
@@ -64,6 +73,7 @@ function handleClick() {
 </script>
 
 <style lang="less" scoped>
+
 .g-doc {
   min-width: 1200px;
   max-width: 1920px;
@@ -80,6 +90,21 @@ function handleClick() {
 .m-head {
   height: 70px;
   background-color: #fff;
+}
+.head-nav {
+  width: 1200px;
+  height: 100%;
+  padding: 0 20px;
+
+}
+.logo{
+  width: 170px;
+  height: 70px;
+  display: block;
+  background: url(https://n1image.hjfile.cn/res7/2020/07/27/0725865d1a73294452a9314747e87dc9.png) 0 no-repeat;
+  background-size: contain;
+  text-indent: -9999px;
+  margin-right: 40px;
 }
 .m-body {
   height: 580px;

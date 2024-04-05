@@ -1,13 +1,14 @@
 <template>
-  <div class="bc">
-    <FriendItem 
+  <el-scrollbar class="bc" v-if="friends.length > 5">
+    <FriendItem
     v-for="friend in friends"
     :key="friend.message"
     :name="name"
     :message="message"
     >
     </FriendItem>
-  </div>
+  </el-scrollbar>
+  <div class="bc" v-else></div>
 </template>
 
 <script setup>
@@ -20,6 +21,7 @@ const friends = reactive([
 ])
 
 const { name, message } = toRef(friends)
+
 </script>
 
 <style>

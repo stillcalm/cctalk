@@ -1,4 +1,4 @@
-# demo
+# chat
 
 ## Project setup
 ```

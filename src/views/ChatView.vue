@@ -3,7 +3,10 @@
     <el-aside class="left-aside">
       <FriendList></FriendList>
     </el-aside>
-    <el-container class="bgc">
+  <el-container>
+    Welcome
+  </el-container>
+<!--     <el-container class="bgc">
       <el-header class="header">Header</el-header>
       <el-main>Main</el-main>
       <el-footer class="input-wrapper">
@@ -36,17 +39,18 @@
           </template>
         </el-dropdown>
       </div>
-    </el-aside>
+    </el-aside> -->
+    
   </el-container>
 </template>
 
 <script setup>
 import FriendList from "@/components/friendList/FriendList.vue";
 /* import mqtt from "mqtt"; */
-import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
+/* import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
 import { ref } from "vue";
 
-const message = ref("");
+const message = ref(""); */
 
 /* let client = mqtt.connect("ws://localhost", );
 const published = client.publish("test", "hello", { qos: 1, retain: true }); */

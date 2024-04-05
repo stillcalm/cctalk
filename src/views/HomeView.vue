@@ -28,7 +28,7 @@
             <!-- left -->
             <el-aside class="left">
               <div class="user-icon" @click="userInfoVisible = true">
-                <div>
+                <div class="user-icon-wrapper">
                   <el-avatar
                     src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
                   />
@@ -89,6 +89,51 @@
 
   <el-dialog
     v-model="userInfoVisible"
+    :show-close="false"
+    width="350px"
+    draggable
+    overflow
+  >
+    <template #header="{ titleId, titleClass }">
+      <div class="my-header">
+        <h4 :id="titleId" :class="titleClass">个人信息</h4>
+      </div>
+    </template>
+
+    <el-form :model="form">
+      <el-form-item label="账号" :label-width="formLabelWidth">
+        <el-input v-model="form.name" autocomplete="off" disabled/>
+      </el-form-item>
+      <el-form-item label="昵称" :label-width="formLabelWidth">
+        <el-input v-model="form.name" autocomplete="off" />
+      </el-form-item>
+        <el-form-item label="性别" :label-width="formLabelWidth">
+        <el-select v-model="form.region" placeholder="请选择性别">
+          <el-option label="未知" value="other" />
+          <el-option label="男" value="male" />
+          <el-option label="女" value="female" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="手机" :label-width="formLabelWidth">
+        <el-input v-model="form.name" placeholder="请输入手机号" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="邮箱" :label-width="formLabelWidth">
+        <el-input v-model="form.name" placeholder="请输入邮箱" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="签名" :label-width="formLabelWidth">
+        <el-input v-model="form.name" placeholder="请输入签名" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="userInfoVisible = false"> 取消 </el-button>
+      <el-button type="primary" @click="userInfoVisible = false">
+        保存
+      </el-button>
+    </template>
+  </el-dialog>
+  <!--   <el-dialog
+    v-model="userInfoVisible"
     title="提示"
     width="500"
     :modal="false"
@@ -96,19 +141,28 @@
     overflow
   >
     <span>信息</span>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="userInfoVisible = false">取消</el-button>
-        <el-button type="primary" @click="(userInfoVisible = false), logOut()">
-          确定
+    <template #header="{ close, titleId, titleClass }">
+      <div class="my-header">
+        <h4 :id="titleId" :class="titleClass">This is a custom header!</h4>
+        <el-button type="danger" @click="close">
+          <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
+          Close
         </el-button>
       </div>
     </template>
-  </el-dialog>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="userInfoVisible = false">取消</el-button>
+        <el-button type="primary" @click="(userInfoVisible = false)">
+          保存
+        </el-button>
+      </div>
+    </template>
+  </el-dialog> -->
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref,reactive } from "vue";
 import router from "../router";
 import ChatView from "./ChatView.vue";
 import ContactView from "./ContactView.vue";
@@ -133,10 +187,23 @@ const handleSelect = (key) => {
     isNote.value = true;
   }
 };
+
+const form = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+})
+
 const logOut = () => {
   console.log("退出");
   router.replace({ path: "/login" });
 };
+
 </script>
 
 <style scoped>
@@ -192,8 +259,12 @@ const logOut = () => {
   border-radius: 50%;
   border: 1px solid #e8e8e8;
 }
-.user-icon:hover{
+.user-icon:hover {
   cursor: pointer;
+}
+.user-icon-wrapper {
+  width: 40px;
+  height: 40px;
 }
 .el-menu-vertical {
   width: 60px;
