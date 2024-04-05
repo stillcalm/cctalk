@@ -27,7 +27,7 @@ const routes = [
         component: () => import('../views/ContactView.vue'),
         children: [
           {
-            path: '/home/chat/contact',
+            path: '/home/contact/contact',
             name: 'friend',
             component: () => import('../components/contactList/ContactList.vue'),
           }

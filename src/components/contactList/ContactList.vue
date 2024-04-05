@@ -4,8 +4,8 @@
       v-for="contact in contacts"
       :key="contact.uuid"
       :name="contact.name"
-      @click="console.log(contact.uuid),moreInfo"
-
+      :active="current === contact.uuid"
+      @click="handleContactClick(contact.uuid)"
     >
     </ContactItem>
   </el-scrollbar>
@@ -13,57 +13,100 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import ContactItem from "./ContactItem.vue";
+import { reactive, ref } from "vue";
 
-const emits = defineEmits(["FatherClick"]);
+const emits = defineEmits(["handleContactClick"]);
+let current = ref(null);
 
-const moreInfo = () => {
-  emits("FatherClick");
-  console.log("moreInfo");
+const handleContactClick = (uuid) => {
+  current.value = uuid;
+  emits("handleContactClick", current.value);
 };
 
 const contacts = reactive([
-  { 
+  {
     name: "John",
     uuid: "11111111",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "John",
+    signature: "I'm John",
   },
-  { 
-    name: "Jane",
-    uuid: "11111112",
+  {
+    name: "Mike",
+    uuid: "22222222",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Mike",
+    signature: "I'm Mike",
   },
-  { name: "Bob",
-    uuid: "11111113",
+  {
+    name: "Tom",
+    uuid: "33333333",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Tom",
+    signature: "I'm Tom",
   },
-  { name: "Alice",
-    uuid: "11111114",
+  {
+    name: "Mary",
+    uuid: "44444444",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Mary",
+    signature: "I'm Mary",
   },
-  { name: "Mike",
-    uuid: "11111115",
+  {
+    name: "Jack",
+    uuid: "55555555",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Jack",
+    signature: "I'm Jack",
   },
-  { name: "Emily",
-    uuid: "11111116",
+  {
+    name: "Lucy",
+    uuid: "66666666",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Lucy",
+    signature: "I'm Lucy",
   },
-  { name: "David",
-    uuid: "11111117",
+  {
+    name: "Jerry",
+    uuid: "77777777",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Jerry",
+    signature: "I'm Jerry",
   },
-  { name: "Sarah",
-    uuid: "11111118",
+  {
+    name: "Emma",
+    uuid: "88888888",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Emma",
+    signature: "I'm Emma",
   },
-  { name: "Michael",
-    uuid: "11111119",
+  {
+    name: "Emily",
+    uuid: "99999999",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Emily",
+    signature: "I'm Emily",
   },
-  { name: "Emma",
-    uuid: "11111120",
+  {
+    name: "Emma",
+    uuid: "10101010",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Emma",
+    signature: "I'm Emily",
   },
-  { name: "Matthew",
-    uuid: "11111121",
+  {
+    name: "Nike",
+    uuid: "11145411", 
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Nike",
+    signature: "I'm Nike",
   },
-  { name: "Olivia",
-    uuid: "11111122",
-  },
-  { name: "James",
-    uuid: "11111123",
+  {
+    name: "Luce",
+    uuid: "1115411",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Luce",
+    signature: "I'm Luce",
   }
 ]);
 </script>
@@ -73,4 +116,5 @@ const contacts = reactive([
   width: 100%;
   height: 100%;
 }
+
 </style>

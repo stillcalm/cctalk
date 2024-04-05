@@ -1,5 +1,5 @@
 <template>
-  <div class="das">
+  <div :class="{ active: active }">
     <div class="list-item">
       <div class="left">
         <div class="user-icon">
@@ -11,20 +11,23 @@
         </div>
       </div>
       <div class="right">
-        <div class="name">{{ props.name}}</div>
+        <div class="name">{{ props.name }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
 const props = defineProps({
-    name: {
-        type: String,
-        default: '默认名称'
-    }
-})
+  name: {
+    type: String,
+    default: "默认名称",
+  },
+  active: {
+    type: Boolean,
+    default: false,
+  }
+});
 </script>
 
 <style scoped>
@@ -41,6 +44,10 @@ const props = defineProps({
 .list-item:hover {
   background-color: #f5f5f5;
 }
+
+.active {
+  background-color: #f5f5f5;
+}
 .left {
   width: 60px;
   height: 100%;
@@ -53,11 +60,11 @@ const props = defineProps({
   display: flex;
   align-items: center;
 }
-.name{
+.name {
   text-align: left;
   padding-left: 10px;
   font-size: 15px;
-  color: #333
+  color: #333;
 }
 
 .user-icon > div {
@@ -70,10 +77,10 @@ const props = defineProps({
   justify-content: center;
 }
 
-.time{
-    text-align: left;
-    font-size: 12px;
-    color: #999;
-    padding-top: 15px;
+.time {
+  text-align: left;
+  font-size: 12px;
+  color: #999;
+  padding-top: 15px;
 }
 </style>

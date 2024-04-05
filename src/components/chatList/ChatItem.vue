@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div :class="{ active: active }">
     <div class="list-item">
-
       <div class="left">
         <div class="user-icon">
           <div>
@@ -13,31 +12,32 @@
       </div>
 
       <div class="center">
-        <div class="name">{{ props.name}}</div>
+        <div class="name">{{ props.name }}</div>
         <div class="message">{{ props.message }}</div>
       </div>
 
       <div class="right">
-        <div class="time">
-            15:20
-        </div>
+        <div class="time">15:20</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
 const props = defineProps({
-    name: {
-        type: String,
-        default: '马东'
-    },
-    message: {
-        type: String,
-        default: '你好'
-    }
-})
+  name: {
+    type: String,
+    default: "马东",
+  },
+  message: {
+    type: String,
+    default: "你好",
+  },
+  active: {
+    type: Boolean,
+    default: false,
+  },
+});
 </script>
 
 <style scoped>
@@ -54,6 +54,9 @@ const props = defineProps({
 .list-item:hover {
   background-color: #f5f5f5;
 }
+.active {
+  background-color: #f5f5f5;
+}
 .left {
   width: 60px;
   height: 100%;
@@ -64,15 +67,15 @@ const props = defineProps({
 .center {
   flex-grow: 1;
 }
-.name{
-    text-align: left;
-    padding-top: 10px;
+.name {
+  text-align: left;
+  padding-top: 10px;
 }
-.message{
-    text-align: left;
-    font-size: 12px;
-    color: #999;
-    padding-top: 5px;
+.message {
+  text-align: left;
+  font-size: 12px;
+  color: #999;
+  padding-top: 5px;
 }
 .user-icon > div {
   width: 40px;
@@ -87,10 +90,10 @@ const props = defineProps({
   width: 50px;
   height: 100%;
 }
-.time{
-    text-align: left;
-    font-size: 12px;
-    color: #999;
-    padding-top: 15px;
+.time {
+  text-align: left;
+  font-size: 12px;
+  color: #999;
+  padding-top: 15px;
 }
 </style>

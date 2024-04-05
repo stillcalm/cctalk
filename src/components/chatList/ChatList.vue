@@ -1,10 +1,12 @@
 <template>
-  <el-scrollbar class="bc" v-if="friends.length > 0">
+  <el-scrollbar class="bc" v-if="chats.length > 0">
     <ChatItem
-    v-for="friend in friends"
-    :key="friend.message"
-    :name="friend.name"
-    :message="friend.message"
+      v-for="chat in chats"
+      :key="chat.message"
+      :name="chat.name"
+      :message="chat.message"
+      :active="current === chat.uuid"
+      @click="handleChatClick(chat.uuid)"
     >
     </ChatItem>
   </el-scrollbar>
@@ -12,30 +14,106 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from "vue";
 
-const friends = reactive([
-  { name: 'John', message: '30' },
-  { name: 'Jane', message: '25' }, 
-  { name: 'Bob', message: '35' },
-  { name: 'Alice', message: '28' },
-  { name: 'Mike', message: '32' },
-  { name: 'Emily', message: '27' },
-  { name: 'David', message: '31' },
-  { name: 'Sarah', message: '29' },
-  { name: 'Daniel', message: '33' },
-  { name: 'Olivia', message: '26' },
-  { name: 'James', message: '34' },
-  { name: 'Emma', message: '27' },
-  { name: 'Michael', message: '32' },
-  { name: 'Sophia', message: '28' },
-  { name: 'William', message: '31' },
-])
+let current = ref(null);
+const emits = defineEmits(["handleChatClick"]);
 
+const handleChatClick = (uuid) => {
+  current.value = uuid;
+  emits("handleChatClick", current.value);
+};
+
+const chats = reactive([
+  {
+    name: "John",
+    uuid: "11111111",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "John",
+    message: "Hello",
+  },
+  {
+    name: "Mike",
+    uuid: "22222222",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Mike",
+    message: "Hi",
+  },
+  {
+    name: "Tom",
+    uuid: "33333333",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Tom",
+    message: "How are you?",
+  },
+  {
+    name: "Mary",
+    uuid: "44444444",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Mary",
+    message: "I'm fine, thank you.",
+  },
+  {
+    name: "Jack",
+    uuid: "55555555",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Jack",
+    message: "What's up?",
+  },
+  {
+    name: "Lucy",
+    uuid: "66666666",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Lucy",
+    message: "I'm good, thanks.",
+  },
+  {
+    name: "Jerry",
+    uuid: "77777777",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Jerry",
+    message: "How's it going?",
+  },
+  {
+    name: "Emma",
+    uuid: "88888888",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Emma",
+    message: "I'm good, thanks.",
+  },
+  {
+    name: "Emily",
+    uuid: "99999999",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Emily",
+    message: "I'm good, thanks.",
+  },
+  {
+    name: "Emma",
+    uuid: "10101010",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Emma",
+    message: "I'm good, thanks.",
+  },
+  {
+    name: "Nike",
+    uuid: "11145411",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Nike",
+    message: "I'm good, thanks.",
+  },
+  {
+    name: "Luce",
+    uuid: "1115411",
+    avatar: "https://joeschmoe.io/api/v1/random",
+    nickname: "Luce",
+    message: "I'm good, thanks.",
+  },
+]);
 </script>
 
 <style>
-.bc{  
+.bc {
   width: 100%;
   height: 100%;
 }
