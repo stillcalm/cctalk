@@ -2,9 +2,10 @@
   <el-scrollbar class="bc" v-if="contacts.length > 0">
     <ContactItem
       v-for="contact in contacts"
-      :key="contact.name"
+      :key="contact.uuid"
       :name="contact.name"
-      @click="moreInfo"
+      @click="console.log(contact.uuid),moreInfo"
+
     >
     </ContactItem>
   </el-scrollbar>
@@ -23,25 +24,47 @@ const moreInfo = () => {
 };
 
 const contacts = reactive([
-  { name: "John" },
-  { name: "Jane" },
-  { name: "Bob" },
-  { name: "Alice" },
-  { name: "Mike" },
-  { name: "Emily" },
-  { name: "David" },
-  { name: "Sarah" },
-  { name: "Michael" },
-  { name: "Emma" },
-  { name: "Matthew" },
-  { name: "Olivia" },
-  { name: "James" },
-  { name: "Ava" },
-  { name: "Benjamin" },
-  { name: "Isabella" },
-  { name: "Daniel" },
-  { name: "Sophia" },
-  { name: "Logan" },
+  { 
+    name: "John",
+    uuid: "11111111",
+  },
+  { 
+    name: "Jane",
+    uuid: "11111112",
+  },
+  { name: "Bob",
+    uuid: "11111113",
+  },
+  { name: "Alice",
+    uuid: "11111114",
+  },
+  { name: "Mike",
+    uuid: "11111115",
+  },
+  { name: "Emily",
+    uuid: "11111116",
+  },
+  { name: "David",
+    uuid: "11111117",
+  },
+  { name: "Sarah",
+    uuid: "11111118",
+  },
+  { name: "Michael",
+    uuid: "11111119",
+  },
+  { name: "Emma",
+    uuid: "11111120",
+  },
+  { name: "Matthew",
+    uuid: "11111121",
+  },
+  { name: "Olivia",
+    uuid: "11111122",
+  },
+  { name: "James",
+    uuid: "11111123",
+  }
 ]);
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="das">
     <div class="list-item">
       <div class="left">
         <div class="user-icon">
@@ -22,7 +22,7 @@
 const props = defineProps({
     name: {
         type: String,
-        default: '马东'
+        default: '默认名称'
     }
 })
 </script>
@@ -69,10 +69,7 @@ const props = defineProps({
   align-items: center;
   justify-content: center;
 }
-.left {
-  width: 50px;
-  height: 100%;
-}
+
 .time{
     text-align: left;
     font-size: 12px;

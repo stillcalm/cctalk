@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-aside class="left-aside">
-      <FriendList></FriendList>
+      <ChatList></ChatList>
     </el-aside>
   <el-container>
     Welcome
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import FriendList from "@/components/friendList/FriendList.vue";
+import ChatList from "@/components/chatList/ChatList.vue";
 /* import mqtt from "mqtt"; */
 /* import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
 import { ref } from "vue";

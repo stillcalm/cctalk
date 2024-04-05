@@ -2,7 +2,7 @@
   <div>
     <div class="list-item">
 
-      <div class="right">
+      <div class="left">
         <div class="user-icon">
           <div>
             <el-avatar
@@ -17,7 +17,7 @@
         <div class="message">{{ props.message }}</div>
       </div>
 
-      <div class="left">
+      <div class="right">
         <div class="time">
             15:20
         </div>
@@ -54,7 +54,7 @@ const props = defineProps({
 .list-item:hover {
   background-color: #f5f5f5;
 }
-.right {
+.left {
   width: 60px;
   height: 100%;
   display: flex;
@@ -83,7 +83,7 @@ const props = defineProps({
   align-items: center;
   justify-content: center;
 }
-.left {
+.right {
   width: 50px;
   height: 100%;
 }

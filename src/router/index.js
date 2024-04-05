@@ -16,9 +16,9 @@ const routes = [
         component: () => import('../views/ChatView.vue'),
         children: [
           {
-            path: '/home/chat/contact',
+            path: '/home/chat/chat',
             name: 'contact',
-            component: () => import('../components/contactList/ContactList.vue'),
+            component: () => import('../components/chatList/ChatList.vue'),
           }
         ]
       },{
@@ -27,9 +27,9 @@ const routes = [
         component: () => import('../views/ContactView.vue'),
         children: [
           {
-            path: '/home/chat/friend',
+            path: '/home/chat/contact',
             name: 'friend',
-            component: () => import('../components/friendList/FriendList.vue'),
+            component: () => import('../components/contactList/ContactList.vue'),
           }
         ]
       }
