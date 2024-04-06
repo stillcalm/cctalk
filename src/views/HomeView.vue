@@ -10,7 +10,6 @@
               placeholder="搜索好友或群组"
               :suffix-icon="Search"
             />
-            <!-- @command="handleCommand" -->
             <el-dropdown>
               <el-button class="top-search">
                 <el-icon><Plus /></el-icon>
@@ -26,7 +25,6 @@
           </el-header>
 
           <el-container>
-            <!-- left -->
             <el-aside class="left">
               <div class="user-icon" @click="userInfoVisible = true">
                 <div class="user-icon-wrapper">
@@ -150,9 +148,6 @@
       </el-button>
     </template>
   </el-dialog>
-
-  
-
 </template>
 
 <script setup>

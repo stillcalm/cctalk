@@ -1,76 +1,69 @@
 <template>
-  <div class="g-doc m-head">
-    <div class="head-nav">
-      <a href="#" class="logo" title="CCtalk"></a>
-    </div>
-  </div>
-  <div class="g-doc m-body">
-    <div class="login-container">
-      <div class="login-form">
-        <h2 class="title">CCtalk 登录</h2>
-        <div class="m-desc"></div>
-        <div class="m-form-group">
-          <el-input
-            v-model="info.userName"
-            class="m-input"
-            placeholder="CCtalk账号登录"
-            :prefix-icon="User"
+  <div class="login-container">
+    <div class="login-form">
+      <h2 class="title">CCtalk 登录</h2>
+      <div class="m-desc"></div>
+      <div class="m-form-group">
+        <el-input
+          v-model="info.userName"
+          class="m-input"
+          placeholder="CCtalk账号或邮箱"
+          :prefix-icon="User"
+        />
+      </div>
+      <div class="m-form-group">
+        <el-input
+          v-model="info.password"
+          class="m-input"
+          placeholder="密码"
+          :prefix-icon="Lock"
+          show-password
+        />
+      </div>
+      <div class="m-form-group login-error">
+        <transition name="el-fade-in-linear">
+          <div v-if="errorMessage" class="el-form-item__error">
+            {{ errorMessage }}
+          </div>
+        </transition>
+      </div>
+      <div class="option">
+        <div class="m-from-small-group">
+          <el-checkbox
+            v-model="checked1"
+            label="同意并遵守隐私协议"
+            size="small"
+            text-color="#0056ff"
           />
         </div>
-        <div class="m-form-group">
-          <el-input
-            v-model="info.password"
-            class="m-input"
-            placeholder="登录密码"
-            :prefix-icon="Lock"
-            show-password
-          />
+        <div class="m-from-small-group">
+          <el-checkbox v-model="checked2" label="15天免登录" size="small" />
         </div>
-        <div class="m-form-group login-error">
-          <div v-if="errorMessage.value" class="el-form-item__error">
-            {{ errorMessage.value }}
-          </div>
-        </div>
-        <div class="option">
-          <div class="m-from-small-group">
-            <el-checkbox
-              v-model="checked1"
-              label="同意并遵守隐私协议"
-              size="small"
-              text-color="#0056ff"
-            />
-          </div>
-          <div class="m-from-small-group">
-            <el-checkbox v-model="checked2" label="15天免登录" size="small" />
-          </div>
-        </div>
-        <div class="m-form-group">
-          <el-button class="m-btn" type="primary" @click="handleLogin"
-            >登 录</el-button
-          >
-        </div>
-        <div class="m-reset">
-          <span class="m-r-left">
-            还没有账号？
-            <router-link to="/register">立即注册</router-link>
-          </span>
-          <span class="m-r-right">
-            <router-link to="/reset">忘记密码？</router-link>
-          </span>
-        </div>
+      </div>
+      <div class="m-form-group">
+        <el-button class="m-btn" type="primary" @click="debounceLogin"
+          >登 录</el-button
+        >
+      </div>
+      <div class="m-reset">
+        <span class="m-r-left">
+          还没有账号？
+          <router-link to="/register">立即注册</router-link>
+        </span>
+        <span class="m-r-right">
+          <router-link to="/reset">忘记密码？</router-link>
+        </span>
       </div>
     </div>
   </div>
-  <div class="g-doc m-foot">© 2024-2024</div>
 </template>
 
 <script setup>
 import { ref, reactive } from "vue";
 import { Lock, User } from "@element-plus/icons-vue";
 import router from "../router";
-import { login } from "../http/api";
-
-/* import { login } from "../http/api"; */
+import { login } from "../http/api/user";
+import { debounce } from "../utils/index";
 
 const checked1 = ref(false);
 const checked2 = ref(false);
@@ -81,40 +74,33 @@ const info = reactive({
   password: "",
 });
 
-function handleLogin() {
+const handleErrorMessage = (message) => {
+  errorMessage.value = message;
+  setTimeout(() => {
+    errorMessage.value = "";
+  }, 2000);
+};
+
+const handleLogin = () => {
   login({
     username: info.userName,
     password_hash: info.password,
-  }).then((res) => {
-/*     console.log(res);
-    console.log(res.data); */
-    if (res.status === 200) {
-      localStorage.setItem("token", res.data.token);
-      router.push({ path: "/home" });
-    }
-  });
-  /*  try {
-    const response = axios.post("http://localhost:3000/api/users/login", {
-      username: info.userName,
-      password_hash: info.password,
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        localStorage.setItem("token", res.data.token);
+        router.push({ path: "/home" });
+      } else {
+        handleErrorMessage("意外错误");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      handleErrorMessage("用户名或密码错误");
     });
+};
 
-    if (response.data.status === 200) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.userId);
-      console.log(response.data);
-      router.push({ path: "/home" });
-    } else {
-      // 登录失败的处理逻辑，例如显示错误消息
-      // errorMessage.value = "登录失败，请检查用户名和密码";
-      console.log("fail");
-      errorMessage.value = "登录失败，请检查用户名和密码";
-    }
-  } catch (error) {
-    console.error(error);
-    errorMessage.value = "登录失败，请检查用户名和密码";
-  } */
-}
+const debounceLogin = debounce(handleLogin, 250, true);
 
 /* onMounted(() => {
   const store = useStore();
@@ -126,10 +112,6 @@ function handleLogin() {
 </script>
 
 <style lang="less" scoped>
-.g-doc {
-  min-width: 1200px;
-  max-width: 1920px;
-}
 .title {
   font-size: 20px;
   font-weight: 400;
@@ -138,30 +120,6 @@ function handleLogin() {
   padding: 10px 0 0;
   text-align: center;
   color: #222;
-}
-.m-head {
-  height: 70px;
-  background-color: #fff;
-}
-.head-nav {
-  width: 1200px;
-  height: 100%;
-  padding: 0 20px;
-}
-.logo {
-  width: 170px;
-  height: 70px;
-  display: block;
-  background: url(https://n1image.hjfile.cn/res7/2020/07/27/0725865d1a73294452a9314747e87dc9.png)
-    0 no-repeat;
-  background-size: contain;
-  text-indent: -9999px;
-  margin-right: 40px;
-}
-.m-body {
-  height: 580px;
-  padding: 80px 0 0;
-  background: url("../assets/bg.png") no-repeat;
 }
 .login-container {
   display: flex;
@@ -187,6 +145,13 @@ function handleLogin() {
 .m-form-group {
   margin: 15px 0;
 }
+.el-form-item__error {
+  font-size: 12px;
+  color: red;
+  line-height: 25px;
+  float: left;
+  padding-left: 5px;
+}
 .m-from-small-group {
   padding-left: 5px;
   text-align: left;
@@ -211,9 +176,6 @@ function handleLogin() {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-.m-foot {
-  color: #999999;
 }
 a,
 a:hover {

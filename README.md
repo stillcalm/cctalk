@@ -20,5 +20,22 @@ yarn build
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+项目结构
+```
+├── public
+├── src                   // 源码
+│   ├── assets            // 静态资源
+│   ├── components        // 组件
+│   ├── http              // 网络请求
+│   ├── router            // 路由
+│   ├── utils             // 工具类
+│   ├── views             // 页面
+│   ├── App.vue
+│   └── main.js
+├── .gitignore
+├── babel.config.js
+├── package-lock.json
+├── README.md
+├── vue.config.js
+└── yarn.lock
+```

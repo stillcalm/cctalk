@@ -1,21 +1,13 @@
 <template>
-  <div class="login-container">
-    <div class="login-form">
-      <h2 class="title">CCtalk 注册</h2>
+  <div class="reset-container">
+    <div class="reset-form">
+      <h2 class="title">密码重置</h2>
       <div class="m-desc"></div>
-      <div class="m-form-group">
-        <el-input
-          v-model="info.userName"
-          class="m-input"
-          placeholder="请输入账号"
-          :prefix-icon="User"
-        />
-      </div>
       <div class="m-form-group">
         <el-input
           v-model="info.email"
           class="m-input"
-          placeholder="请输入邮箱"
+          placeholder="邮箱"
           :prefix-icon="Message"
         />
       </div>
@@ -23,7 +15,7 @@
         <el-input
           v-model="info.password"
           class="m-input"
-          placeholder="请输入密码"
+          placeholder="请输入新的密码"
           :prefix-icon="Lock"
           show-password
         />
@@ -51,7 +43,7 @@
 
       <div class="m-form-group">
         <el-button class="m-btn" type="primary" @click="throttleRegister"
-          >注册</el-button
+          >下一步</el-button
         >
       </div>
       <div class="m-reset">
@@ -66,7 +58,7 @@
 
 <script setup>
 import { ref, reactive, onUnmounted } from "vue";
-import { Lock, Message, User } from "@element-plus/icons-vue";
+import { Message, Lock } from "@element-plus/icons-vue";
 import router from "../router";
 import { register } from "../http/api/user";
 import { throttle } from "../utils/index";
@@ -86,7 +78,7 @@ const info = reactive({
 // 发送验证码的方法
 const sendVerificationCode = async () => {
   // 做一些验证，比如邮箱格式
-  
+
   // 假设验证通过，开始发送验证码
   if (isCoolingDown.value) {
     // 如果正在倒计时，不执行发送
@@ -147,7 +139,7 @@ const handleRegister = () => {
     })
     .catch((error) => {
       console.log(error);
-      handleErrorMessage("用户名或密码错误");
+      handleErrorMessage("验证码错误");
     });
 };
 const throttleRegister = throttle(handleRegister, 3000, true);
@@ -169,7 +161,7 @@ onUnmounted(() => {
   color: #222;
 }
 
-.login-container {
+.reset-container {
   display: flex;
   text-align: center;
   justify-content: center;
@@ -179,11 +171,11 @@ onUnmounted(() => {
   float: none;
   margin: auto;
   width: 405px;
-  height: 476px;
+  height: 389px;
   padding-top: 30px;
   background: #fff;
 }
-.login-form {
+.reset-form {
   width: 325px;
   margin: 0 auto;
   padding-bottom: 0.1px;
