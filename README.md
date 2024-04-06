@@ -1,4 +1,7 @@
-# chat
+# CCtalk
+
+## 相关版本
+1. node  18.12.0
 
 ## Project setup
 ```
@@ -10,15 +13,6 @@ yarn install
 yarn serve
 ```
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
 
 项目结构
 ```
