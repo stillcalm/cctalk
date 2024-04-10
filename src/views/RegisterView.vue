@@ -68,8 +68,9 @@
 import { ref, reactive, onUnmounted } from "vue";
 import { Lock, Message, User } from "@element-plus/icons-vue";
 import router from "../router";
-import { register } from "../http/api/user";
-import { throttle } from "../utils/index";
+import { register } from "../request/api/user";
+import { throttle } from "../utils/utils";
+import { isAccount,isEmail,passwordValidate } from "../utils/validate";
 
 const errorMessage = ref();
 const isCoolingDown = ref(false);
@@ -85,7 +86,20 @@ const info = reactive({
 
 // 发送验证码的方法
 const sendVerificationCode = async () => {
+
+  if(!isAccount(info.userName)){
+    handleErrorMessage("账号只能以字母开头，长度在8~18之间，只能包含字母、数字");
+    return;
+  }
   // 做一些验证，比如邮箱格式
+  if (!isEmail(info.email)) {
+    handleErrorMessage("请输入正确的邮箱");
+    return;
+  }
+  if(!passwordValidate(info.password)){
+    handleErrorMessage("密码必须包含大小写字母和数字，长度在6~18之间");
+    return;
+  }
   
   // 假设验证通过，开始发送验证码
   if (isCoolingDown.value) {

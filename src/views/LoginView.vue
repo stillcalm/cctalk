@@ -7,7 +7,7 @@
         <el-input
           v-model="info.userName"
           class="m-input"
-          placeholder="CCtalk账号或邮箱"
+          placeholder="CCtalk账号"
           :prefix-icon="User"
         />
       </div>
@@ -62,8 +62,9 @@
 import { ref, reactive } from "vue";
 import { Lock, User } from "@element-plus/icons-vue";
 import router from "../router";
-import { login } from "../http/api/user";
-import { debounce } from "../utils/index";
+import { login } from "../request/api/user";
+import { debounce } from "../utils/utils";
+import { isAccount, passwordValidate} from "../utils/validate";
 
 const checked1 = ref(false);
 const checked2 = ref(false);
@@ -82,6 +83,18 @@ const handleErrorMessage = (message) => {
 };
 
 const handleLogin = () => {
+  if(!isAccount(info.userName)){
+    handleErrorMessage("请输入正确的账号");
+    return;
+  }
+  if(!info.password){
+    handleErrorMessage("请输入密码");
+    return;
+  }
+  if(!passwordValidate(info.password)){
+    handleErrorMessage("密码错误");
+    return;
+  }
   login({
     username: info.userName,
     password_hash: info.password,
@@ -94,8 +107,7 @@ const handleLogin = () => {
         handleErrorMessage("意外错误");
       }
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       handleErrorMessage("用户名或密码错误");
     });
 };

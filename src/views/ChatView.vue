@@ -11,7 +11,13 @@
         v-show="current === chat.uuid"
       >
         <el-header class="header">{{ chat.name }}</el-header>
-        <el-main>Main</el-main>
+        <el-main>
+          <MessageItem
+            v-for="message in messageList"
+            :key="message.uuid"
+            :message="message.message"
+          ></MessageItem>
+        </el-main>
         <el-footer class="input-wrapper">
           <el-input
             v-model="message"
@@ -37,7 +43,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item command="a">举报</el-dropdown-item>
                 <el-dropdown-item command="b">删除好友</el-dropdown-item>
-  <!--               <el-dropdown-item command="c">移至黑名单</el-dropdown-item> -->
+                <!--               <el-dropdown-item command="c">移至黑名单</el-dropdown-item> -->
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -111,6 +117,7 @@
 /* import mqtt from "mqtt"; */
 import { ref, reactive } from "vue";
 import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
+import MessageItem from "@/components/MessageItem.vue";
 
 /* let client = mqtt.connect("ws://localhost", );
 const published = client.publish("test", "hello", { qos: 1, retain: true }); */
@@ -120,6 +127,28 @@ const current = ref();
 const reportDialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const blacklistDialogVisible = ref(false);
+const messageList = reactive([
+  {
+    uuid: "11111111",
+    message: "Hello, how are you?",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "Hi, I'm fine, thank you.",
+    time: "12:00",
+  },
+  {
+    uuid: "11111111",
+    message: "How's it going?",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+]);
 
 const FatherClick = (val) => {
   current.value = val;

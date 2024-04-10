@@ -60,8 +60,8 @@
 import { ref, reactive, onUnmounted } from "vue";
 import { Message, Lock } from "@element-plus/icons-vue";
 import router from "../router";
-import { register } from "../http/api/user";
-import { throttle } from "../utils/index";
+import { register } from "../request/api/user";
+import { throttle } from "../utils/utils";
 
 const errorMessage = ref();
 const isCoolingDown = ref(false);
