@@ -4,21 +4,25 @@
       <div class="common-layout">
         <el-container>
           <el-header class="header">
-            <el-input
-              v-model="input2"
-              style="width: 480px"
-              placeholder="搜索好友或群组"
-              :suffix-icon="Search"
-            />
-            <el-dropdown>
+            <div class="search-content" @click="searchVisible = true">
+              <el-icon style="vertical-align: middle"><Search /></el-icon
+              >搜索好友或群组
+            </div>
+            <el-dropdown @command="handleCommand" trigger="click">
               <el-button class="top-search">
                 <el-icon><Plus /></el-icon>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="a">添加好友</el-dropdown-item>
-                  <el-dropdown-item command="b">创建群组</el-dropdown-item>
-                  <el-dropdown-item command="c">加入群组</el-dropdown-item>
+                  <el-dropdown-item command="addFriend"
+                    >添加好友</el-dropdown-item
+                  >
+                  <el-dropdown-item command="joinGroup"
+                    >加入群组</el-dropdown-item
+                  >
+                  <el-dropdown-item command="createGroup"
+                    >创建群组</el-dropdown-item
+                  >
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -26,7 +30,7 @@
 
           <el-container>
             <el-aside class="left">
-              <div class="user-icon" @click="userInfoVisible = true">
+              <div class="user-icon" @click="getUserInfo">
                 <div class="user-icon-wrapper">
                   <el-avatar
                     src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
@@ -94,6 +98,7 @@
     :show-close="false"
     width="350px"
     :modal="false"
+    :destroy-on-close="true"
     plain
     draggable
     overflow
@@ -108,7 +113,7 @@
       <el-form-item label="账号" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off" disabled />
       </el-form-item>
-      <el-form-item label="昵称" :label-width="formLabelWidth">
+       <el-form-item label="昵称" :label-width="formLabelWidth">
         <el-input v-model="form.nickName" autocomplete="off" />
       </el-form-item>
       <el-form-item label="性别" :label-width="formLabelWidth">
@@ -148,6 +153,67 @@
       </el-button>
     </template>
   </el-dialog>
+
+  <el-dialog
+    v-model="addFriendVisible"
+    title="添加好友"
+    width="400"
+    :modal="false"
+    :destroy-on-close="true"
+    draggable
+    append-to-body
+  >
+    <el-input placeholder="请输入账号" v-model="searchUsername"></el-input>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="addFriendVisible = false">取消</el-button>
+        <el-button type="primary" @click="searchFriend"> 查找 </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog
+    v-model="joinGroupVisible"
+    title="加入群组"
+    width="400"
+    :modal="false"
+    :destroy-on-close="true"
+    draggable
+    append-to-body
+  >
+    <el-input placeholder="请输入群组ID"></el-input>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="joinGroupVisible = false">取消</el-button>
+        <el-button type="primary" @click="joinGroupVisible = false">
+          查找
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog
+    v-model="createGroupVisible"
+    title="创建群组"
+    width="400"
+    :modal="false"
+    :destroy-on-close="true"
+    draggable
+    append-to-body
+  >
+    <el-container>
+      <el-aside width="200px">Aside</el-aside>
+      <el-main>Main</el-main>
+    </el-container>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="createGroupVisible = false">
+          确定
+        </el-button>
+        <el-button @click="createGroupVisible = false">取消</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -155,17 +221,23 @@ import { ref, reactive } from "vue";
 import router from "../router";
 import ChatView from "./ChatView.vue";
 import ContactView from "./ContactView.vue";
+import { getUserInfoById, getUserByUsername } from "../request/api/user";
 import {
   SwitchButton,
   ChatDotRound,
   Notebook,
   Plus,
+  Search,
 } from "@element-plus/icons-vue";
 
 const isChat = ref(true);
 const isNote = ref(false);
 const confirmLogout = ref(false);
 const userInfoVisible = ref(false);
+const addFriendVisible = ref(false);
+const createGroupVisible = ref(false);
+const joinGroupVisible = ref(false);
+const searchUsername = ref("");
 
 const handleSelect = (key) => {
   if (key === "chat") {
@@ -175,6 +247,22 @@ const handleSelect = (key) => {
     isChat.value = false;
     isNote.value = true;
   }
+};
+
+const getUserInfo = () => {
+  userInfoVisible.value = true;
+  getUserInfoById({
+    uuid: localStorage.getItem("uuid"),
+  }).then((res) => {
+    if (res.status === 200) {
+      form.name = res.data.username;
+      form.nickName = res.data.nickname;
+      form.gender = res.data.gender;
+      form.phone = res.data.phone;
+      form.email = res.data.email;
+      form.signature = res.data.signature;
+    }
+  });
 };
 
 const form = reactive({
@@ -188,8 +276,33 @@ const form = reactive({
   desc: "",
 });
 
+const handleCommand = (command) => {
+  if (command === "addFriend") {
+    addFriendVisible.value = !addFriendVisible.value;
+  }
+  if (command === "createGroup") {
+    createGroupVisible.value = !createGroupVisible.value;
+  }
+  if (command === "joinGroup") {
+    joinGroupVisible.value = !joinGroupVisible.value;
+  }
+};
+
+const searchFriend = () => {
+  getUserByUsername({
+    username: searchUsername.value,
+  }).then((res) => {
+    if (res.status === 200) {
+      console.log(res.data);
+    }
+  });
+};
+
+const formLabelWidth = "40px";
+
 const logOut = () => {
   console.log("退出");
+  localStorage.removeItem("token");
   router.replace({ path: "/login" });
 };
 </script>
@@ -231,6 +344,16 @@ const logOut = () => {
   margin-left: 25px;
   background-color: #f2f5f8;
 }
+.search-content {
+  cursor: pointer;
+  width: 480px;
+  height: 30px;
+  border: 1px solid #e8e8e8;
+  color: #acb2b9;
+  line-height: 30px;
+  background-color: #f2f5f8;
+}
+
 .left {
   width: 60px;
   height: 610px;

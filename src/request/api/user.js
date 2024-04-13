@@ -33,11 +33,48 @@ export const register = (data) => {
   });
 };
 
-
 export const getCVcode = (data) => {
   return serviceAxios({
     url: "/users/getCVcode",
     method: "post",
     data,
   });
-}
+};
+
+/*
+getUserInfo({
+  uuid: ""
+})
+ */
+export const getUserInfoById = (data) => {
+  return serviceAxios({
+    url: `/users/userinfo`,
+    method: "get",
+    params: {
+      uuid: data.uuid,
+    },
+  });
+};
+
+/*
+getUserInfo({
+  username: ""
+})
+ */
+export const getUserByUsername = (data) => {
+  return serviceAxios({
+    url: `/users/getUserByUsername`,
+    method: "get",
+    params: {
+      username: data.username,
+    },
+  });
+};
+
+export const getHistoryMessages = (data) => {
+  return serviceAxios({
+    url: "/users/getHistoryMessages",
+    method: "get",
+    data,
+  });
+};

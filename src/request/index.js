@@ -2,7 +2,6 @@ import axios from "axios";
 import serverConfig from "./config";
 import qs from "qs";
 
-
 // 创建 axios 请求实例
 const serviceAxios = axios.create({
   baseURL: serverConfig.baseURL, // 基础请求地址
@@ -10,17 +9,20 @@ const serviceAxios = axios.create({
   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
 
-
 // 创建请求拦截
 serviceAxios.interceptors.request.use(
   (config) => {
     // 如果开启 token 认证
     if (serverConfig.useTokenAuthorization) {
-      config.headers["Authorization"] = localStorage.getItem("token"); // 请求头携带 token
+      const token = localStorage.getItem("token"); // 获取 token
+      if (token && token !== "") {
+        config.headers.Authorization = token; // 让每个请求携带自定义token 请根据实际情况自行修改
+      }
     }
     // 设置请求头
-    if(!config.headers["content-type"]) { // 如果没有设置请求头
-      if(config.method === 'post') {
+    if (!config.headers["content-type"]) {
+      // 如果没有设置请求头
+      if (config.method === "post") {
         config.headers["content-type"] = "application/x-www-form-urlencoded"; // post 请求
         config.data = qs.stringify(config.data); // 序列化,比如表单数据
       } else {
@@ -34,7 +36,6 @@ serviceAxios.interceptors.request.use(
     Promise.reject(error);
   }
 );
-
 
 // 创建响应拦截
 serviceAxios.interceptors.response.use(

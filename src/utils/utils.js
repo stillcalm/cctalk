@@ -47,3 +47,4 @@ export const throttle = (func, delay, immediate = false) => {
     }
   };
 };
+

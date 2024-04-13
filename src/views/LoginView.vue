@@ -64,7 +64,7 @@ import { Lock, User } from "@element-plus/icons-vue";
 import router from "../router";
 import { login } from "../request/api/user";
 import { debounce } from "../utils/utils";
-import { isAccount, passwordValidate} from "../utils/validate";
+import { isAccount, passwordValidate } from "../utils/validate";
 
 const checked1 = ref(false);
 const checked2 = ref(false);
@@ -83,15 +83,15 @@ const handleErrorMessage = (message) => {
 };
 
 const handleLogin = () => {
-  if(!isAccount(info.userName)){
+  if (!isAccount(info.userName)) {
     handleErrorMessage("请输入正确的账号");
     return;
   }
-  if(!info.password){
+  if (!info.password) {
     handleErrorMessage("请输入密码");
     return;
   }
-  if(!passwordValidate(info.password)){
+  if (!passwordValidate(info.password)) {
     handleErrorMessage("密码错误");
     return;
   }
@@ -102,6 +102,8 @@ const handleLogin = () => {
     .then((res) => {
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
+        console.log(localStorage.getItem("token"));
+        localStorage.setItem("uuid", res.data.uuid);
         router.push({ path: "/home" });
       } else {
         handleErrorMessage("意外错误");

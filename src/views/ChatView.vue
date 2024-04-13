@@ -1,31 +1,37 @@
 <template>
   <el-container>
     <el-aside class="left-aside">
-      <ChatList @handleChatClick="FatherClick"></ChatList>
+      <ChatList @handleChatClick="chatListClick"></ChatList>
     </el-aside>
-    <el-container v-if="current">
+    <el-container v-if="currentUUID">
       <el-container
         class="bgc"
         v-for="chat in chatsInfo"
         :key="chat.uuid"
-        v-show="current === chat.uuid"
+        v-show="currentUUID === chat.uuid"
       >
-        <el-header class="header">{{ chat.name }}</el-header>
-        <el-main>
-          <MessageItem
-            v-for="message in messageList"
-            :key="message.uuid"
-            :message="message.message"
-          ></MessageItem>
+        <el-header class="header">{{ chat.nickname }}</el-header>
+
+        <el-main class="main">
+          <el-scrollbar>
+            <MessageItem
+              v-for="mes in messageList"
+              :key="mes.uuid"
+              :content="mes.message"
+              :isSelfMessage="mes.uuid === myUUID"
+            ></MessageItem>
+          </el-scrollbar>
         </el-main>
+
         <el-footer class="input-wrapper">
           <el-input
-            v-model="message"
+            v-model="messageInput"
             style="width: 655px; height: 50px"
             type="textarea"
             resize="none"
             :rows="2"
             placeholder="Enter 发送信息,Shift + Enter 换行"
+            @keyup.enter="sendMessage"
           >
           </el-input>
           <div class="function">
@@ -66,8 +72,8 @@
     <span>确定要举报吗</span>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
+        <el-button @click="reportDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="reportDialogVisible = false">
           确定
         </el-button>
       </div>
@@ -85,8 +91,8 @@
     <span>删除后你将从对方联系人列表中消失，且以后不再接收此人的会话消息</span>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
+        <el-button @click="deleteDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="deleteDialogVisible = false">
           确定
         </el-button>
       </div>
@@ -104,8 +110,8 @@
     <span>你确定将以下联系人移至黑名单吗？</span>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
+        <el-button @click="blacklistDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="blacklistDialogVisible = false">
           确定
         </el-button>
       </div>
@@ -122,15 +128,18 @@ import MessageItem from "@/components/MessageItem.vue";
 /* let client = mqtt.connect("ws://localhost", );
 const published = client.publish("test", "hello", { qos: 1, retain: true }); */
 
-const message = ref("");
-const current = ref();
+const myUUID = localStorage.getItem("uuid");
+//console.log(myUUID);
+let messageInput = ref("");
+const currentUUID = ref();
 const reportDialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const blacklistDialogVisible = ref(false);
 const messageList = reactive([
   {
-    uuid: "11111111",
-    message: "Hello, how are you?",
+    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    message:
+      "我认为学生最重要的任务是学习和成长。这不仅仅包括专业知识的学习，还涵盖个人综合素质的提升。在学习过程中，我们需要培养自己的批判性思维、创新能力、团队协作能力等多方面的能力，以适应未来社会的发展需求。同时，我们也需要注重身心健康，保持积极的心态和良好的生活习惯，为未来的工作和生活打下坚实的基础。",
     time: "12:00",
   },
   {
@@ -139,8 +148,53 @@ const messageList = reactive([
     time: "12:00",
   },
   {
-    uuid: "11111111",
+    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
     message: "How's it going?",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
+    time: "12:00",
+  },
+  {
+    uuid: "22222222",
+    message: "I'm good, thanks.",
     time: "12:00",
   },
   {
@@ -150,8 +204,8 @@ const messageList = reactive([
   },
 ]);
 
-const FatherClick = (val) => {
-  current.value = val;
+const chatListClick = (val) => {
+  currentUUID.value = val;
   //console.log(currentUUID.value);
 };
 
@@ -167,95 +221,55 @@ const handleCommand = (command) => {
   }
 };
 
+const sendMessage = (e) => {
+  if (e.code === "Enter") {
+    if (!e.isComposing && !e.shiftKey) {
+      //e.preventDefault();
+      const mes = messageInput.value;
+      messageInput.value = "";
+      if (mes.length > 0) {
+        chatsInfo.push({
+          uuid: "22222222",
+          message: mes,
+          time: "12:00",
+        });
+      }
+    } else {
+      messageInput.value += "\n";
+    }
+  }
+};
+
+/* const newLine = (event) => {
+  event.preventDefault();  
+} */
 const chatsInfo = reactive([
   {
-    name: "John",
-    uuid: "11111111",
+    uuid: "9ef25779-f0b9-48ae-b833-f4853f1dd908",
+    username: "wean1",
+    nickname: "吴志浩",
     avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "John",
-    message: "Hello",
+    messageList: [
+      { content: "Hello", time: "12:00" },
+      { content: "How are you?", time: "12:01" },
+      { content: "I'm fine, thank you.", time: "12:02" },
+    ],
   },
   {
-    name: "Mike",
-    uuid: "22222222",
+    uuid: "a7554f91-63a4-4fa4-b426-40d3fba3a4d2",
+    username: "wean2",
+    nickname: "wean2",
     avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Mike",
-    message: "Hi",
-  },
-  {
-    name: "Tom",
-    uuid: "33333333",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Tom",
-    message: "How are you?",
-  },
-  {
-    name: "Mary",
-    uuid: "44444444",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Mary",
-    message: "I'm fine, thank you.",
-  },
-  {
-    name: "Jack",
-    uuid: "55555555",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Jack",
-    message: "What's up?",
-  },
-  {
-    name: "Lucy",
-    uuid: "66666666",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Lucy",
-    message: "I'm good, thanks.",
-  },
-  {
-    name: "Jerry",
-    uuid: "77777777",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Jerry",
-    message: "How's it going?",
-  },
-  {
-    name: "Emma",
-    uuid: "88888888",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Emma",
-    message: "I'm good, thanks.",
-  },
-  {
-    name: "Emily",
-    uuid: "99999999",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Emily",
-    message: "I'm good, thanks.",
-  },
-  {
-    name: "Emma",
-    uuid: "10101010",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Emma",
-    message: "I'm good, thanks.",
-  },
-  {
-    name: "Nike",
-    uuid: "11145411",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Nike",
-    message: "I'm good, thanks.",
-  },
-  {
-    name: "Luce",
-    uuid: "1115411",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    nickname: "Luce",
-    message: "I'm good, thanks.",
+    messageList: [
+      { content: "Hi", time: "12:00" },
+      { content: "How are you?", time: "12:01" },
+      { content: "I'm fine, thank you.", time: "12:02" },
+    ],
   },
 ]);
 </script>
 
-<style>
+<style scoped>
 .bgc {
   background-color: #f6f8fb;
 }
@@ -266,6 +280,11 @@ const chatsInfo = reactive([
   width: 250px;
   height: 610px;
   border-right: 1px solid #e8e8e8;
+}
+.main {
+  width: 710px;
+  height: 400px;
+  padding: 0;
 }
 .right-aside {
   width: 50px;

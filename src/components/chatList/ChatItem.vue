@@ -1,23 +1,23 @@
 <template>
-  <div :class="{ active: active }">
+  <div :class="{ active: props.active }">
     <div class="list-item">
       <div class="left">
         <div class="user-icon">
           <div>
-            <el-avatar
-              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-            />
+            <el-avatar>
+              {{ chatInfo.nickname.slice(0, 1)}}
+            </el-avatar>
           </div>
         </div>
       </div>
 
       <div class="center">
-        <div class="name">{{ props.name }}</div>
-        <div class="message">{{ props.message }}</div>
+        <div class="name">{{ chatInfo.nickname }}</div>
+        <div class="message">{{ chatInfo.message }}</div>
       </div>
 
       <div class="right">
-        <div class="time">15:20</div>
+        <div class="time">{{ chatInfo.time }}</div>
       </div>
     </div>
   </div>
@@ -25,13 +25,9 @@
 
 <script setup>
 const props = defineProps({
-  name: {
-    type: String,
-    default: "马东",
-  },
-  message: {
-    type: String,
-    default: "你好",
+  chatInfo:{
+    type: Object,
+    default: () => ({})
   },
   active: {
     type: Boolean,

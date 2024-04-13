@@ -101,7 +101,7 @@ const contactsInfo = reactive([
 ]);
 </script>
 
-<style>
+<style scoped>
 .left-aside {
   width: 250px;
   height: 610px;

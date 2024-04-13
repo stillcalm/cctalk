@@ -111,7 +111,7 @@ const contacts = reactive([
 ]);
 </script>
 
-<style>
+<style scoped>
 .bc {
   width: 100%;
   height: 100%;
