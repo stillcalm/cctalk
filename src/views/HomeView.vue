@@ -113,7 +113,7 @@
       <el-form-item label="账号" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off" disabled />
       </el-form-item>
-       <el-form-item label="昵称" :label-width="formLabelWidth">
+      <el-form-item label="昵称" :label-width="formLabelWidth">
         <el-input v-model="form.nickName" autocomplete="off" />
       </el-form-item>
       <el-form-item label="性别" :label-width="formLabelWidth">
@@ -166,8 +166,14 @@
     <el-input placeholder="请输入账号" v-model="searchUsername"></el-input>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="addFriendVisible = false">取消</el-button>
-        <el-button type="primary" @click="searchFriend"> 查找 </el-button>
+        <div v-if="!isSearched">
+          <el-button @click="addFriendVisible = false">取消</el-button>
+          <el-button type="primary" @click="searchFriend"> 查找 </el-button>
+        </div>
+        <div v-else>
+          geren
+          <el-button type="success" @click="addFriend">添加</el-button>
+        </div>
       </div>
     </template>
   </el-dialog>
@@ -237,7 +243,19 @@ const userInfoVisible = ref(false);
 const addFriendVisible = ref(false);
 const createGroupVisible = ref(false);
 const joinGroupVisible = ref(false);
+const isSearched = ref(false);
 const searchUsername = ref("");
+const form = reactive({
+  name: "",
+  region: "",
+  date1: "",
+  date2: "",
+  delivery: false,
+  type: [],
+  resource: "",
+  desc: "",
+});
+const searchedUser = reactive({});
 
 const handleSelect = (key) => {
   if (key === "chat") {
@@ -265,20 +283,10 @@ const getUserInfo = () => {
   });
 };
 
-const form = reactive({
-  name: "",
-  region: "",
-  date1: "",
-  date2: "",
-  delivery: false,
-  type: [],
-  resource: "",
-  desc: "",
-});
-
 const handleCommand = (command) => {
   if (command === "addFriend") {
     addFriendVisible.value = !addFriendVisible.value;
+    isSearched.value = false;
   }
   if (command === "createGroup") {
     createGroupVisible.value = !createGroupVisible.value;
@@ -293,7 +301,8 @@ const searchFriend = () => {
     username: searchUsername.value,
   }).then((res) => {
     if (res.status === 200) {
-      console.log(res.data);
+      isSearched.value = true;
+      searchedUser.value = res.data;
     }
   });
 };
