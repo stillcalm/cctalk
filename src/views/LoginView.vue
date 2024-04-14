@@ -102,7 +102,6 @@ const handleLogin = () => {
     .then((res) => {
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
-        console.log(localStorage.getItem("token"));
         localStorage.setItem("uuid", res.data.uuid);
         router.push({ path: "/home" });
       } else {

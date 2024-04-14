@@ -148,9 +148,7 @@
 
     <template #footer>
       <el-button @click="userInfoVisible = false"> 取消 </el-button>
-      <el-button type="primary" @click="userInfoVisible = false">
-        保存
-      </el-button>
+      <el-button type="primary" @click="handleUpdateUserInfo"> 保存 </el-button>
     </template>
   </el-dialog>
 
@@ -170,9 +168,32 @@
           <el-button @click="addFriendVisible = false">取消</el-button>
           <el-button type="primary" @click="searchFriend"> 查找 </el-button>
         </div>
-        <div v-else>
-          geren
-          <el-button type="success" @click="addFriend">添加</el-button>
+        <div v-else class="searched-user">
+          <el-container>
+            <el-aside width="40px">
+              <el-image
+                style="width: 40px; height: 40px"
+                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+              />
+            </el-aside>
+            <el-aside>
+              <div class="searched-wrapper">
+                <div>
+                  {{ searchedUser.value.nickname }}
+                </div>
+                <div class="searched-describe">
+                  {{
+                    searchedUser.value.signature
+                      ? searchedUser.value.signature
+                      : "这个人很懒，还没有签名"
+                  }}
+                </div>
+              </div>
+            </el-aside>
+          </el-container>
+          <el-button type="success" @click="handleAddFriend(searchUsername)"
+            >添加</el-button
+          >
         </div>
       </div>
     </template>
@@ -227,13 +248,18 @@ import { ref, reactive } from "vue";
 import router from "../router";
 import ChatView from "./ChatView.vue";
 import ContactView from "./ContactView.vue";
-import { getUserInfoById, getUserByUsername } from "../request/api/user";
+import {
+  getUserInfoById,
+  getUserByUsername,
+  updateUserInfo,
+} from "../request/api/user";
+import { addFriendByUsername } from "../request/api/friend";
 import {
   SwitchButton,
   ChatDotRound,
   Notebook,
   Plus,
-  Search,
+  /*   Search, */
 } from "@element-plus/icons-vue";
 
 const isChat = ref(true);
@@ -283,6 +309,23 @@ const getUserInfo = () => {
   });
 };
 
+const handleUpdateUserInfo = () => {
+  addFriendVisible.value = false;
+  updateUserInfo({
+    uuid: localStorage.getItem("uuid"),
+    nickname: form.nickName,
+    gender: form.gender,
+    phone: form.phone,
+    email: form.email,
+    signature: form.signature,
+  }).then((res) => {
+    if (res.status === 200) {
+      //userInfoVisible.value = false;
+    }
+  });
+  userInfoVisible.value = false;
+};
+
 const handleCommand = (command) => {
   if (command === "addFriend") {
     addFriendVisible.value = !addFriendVisible.value;
@@ -303,6 +346,17 @@ const searchFriend = () => {
     if (res.status === 200) {
       isSearched.value = true;
       searchedUser.value = res.data;
+    }
+  });
+};
+
+const handleAddFriend = (_username) => {
+  addFriendByUsername({
+    uuid: localStorage.getItem("uuid"),
+    friendName: _username,
+  }).then((res) => {
+    if (res.status === 200) {
+      //userInfoVisible.value = false;
     }
   });
 };
@@ -362,7 +416,14 @@ const logOut = () => {
   line-height: 30px;
   background-color: #f2f5f8;
 }
-
+.searched-wrapper {
+  padding-left: 10px;
+  text-align: left;
+}
+.searched-describe {
+  padding-top: 8px;
+  color: #acb2b9;
+}
 .left {
   width: 60px;
   height: 610px;

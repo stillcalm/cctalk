@@ -48,11 +48,30 @@ getUserInfo({
  */
 export const getUserInfoById = (data) => {
   return serviceAxios({
-    url: `/users/userinfo`,
+    url: `/users/getUserinfo`,
     method: "get",
     params: {
       uuid: data.uuid,
     },
+  });
+};
+
+/*
+updateUserInfo({
+  uuid: "",
+  username: "",
+  email: "",
+  password_hash: "",
+  emailCode: "",
+  phone: "",
+  phoneCode: "",
+})
+ */
+export const updateUserInfo = (data) => {
+  return serviceAxios({
+    url: `/users/update/${data.uuid}`,
+    method: "post",
+    data,
   });
 };
 

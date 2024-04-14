@@ -10,7 +10,11 @@
         :key="chat.uuid"
         v-show="currentUUID === chat.uuid"
       >
-        <el-header class="header">{{ chat.nickname }}</el-header>
+        <el-header class="header-wrapper">
+          <div>
+            {{ chat.nickname }}
+          </div>
+        </el-header>
 
         <el-main class="main">
           <el-scrollbar>
@@ -34,10 +38,10 @@
             @keyup.enter="sendMessage"
           >
           </el-input>
-          <div class="function">
-            <el-icon><Sunny /></el-icon>
-            <el-icon><Picture /></el-icon>
-            <el-icon><FolderRemove /></el-icon>
+          <div class="function" @click="handleInputSelect">
+            <el-icon class="input-icon"><Sunny /></el-icon>
+            <el-icon class="input-icon"><Picture /></el-icon>
+            <el-icon class="input-icon"><FolderRemove /></el-icon>
           </div>
         </el-footer>
       </el-container>
@@ -273,9 +277,14 @@ const chatsInfo = reactive([
 .bgc {
   background-color: #f6f8fb;
 }
-.header {
+.header-wrapper {
   border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 18px;
 }
+
 .left-aside {
   width: 250px;
   height: 610px;
@@ -309,7 +318,10 @@ const chatsInfo = reactive([
   top: 13px;
   right: 40px;
 }
-
+.input-icon {
+  padding-right: 5px;
+  cursor: pointer;
+}
 .el-textarea__inner::-webkit-scrollbar {
   width: 6px;
   height: 6px;

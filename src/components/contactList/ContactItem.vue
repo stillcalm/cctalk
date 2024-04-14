@@ -5,13 +5,13 @@
         <div class="user-icon">
           <div>
             <el-avatar>
-              {{ props.name.slice(0, 4)}}
+              {{ props.nickname.slice(0, 4)}}
             </el-avatar>
           </div>
         </div>
       </div>
       <div class="right">
-        <div class="name">{{ props.name }}</div>
+        <div class="name">{{ props.nickname }}</div>
       </div>
     </div>
   </div>
@@ -19,7 +19,7 @@
 
 <script setup>
 const props = defineProps({
-  name: {
+  nickname: {
     type: String,
     default: "默认名称",
   },
