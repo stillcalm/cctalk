@@ -69,6 +69,7 @@ import { ref, reactive, onUnmounted } from "vue";
 import { Lock, Message, User } from "@element-plus/icons-vue";
 import router from "../router";
 import { register } from "../request/api/user";
+import sha256 from "js-sha256";
 import { throttle } from "../utils/utils";
 import { isAccount,isEmail,passwordValidate } from "../utils/validate";
 
@@ -145,9 +146,10 @@ const handleErrorMessage = (message) => {
   }, 2000);
 };
 const handleRegister = () => {
+  const hashedPassword = sha256(info.password);
   register({
     username: info.userName,
-    password_hash: info.password,
+    password_hash: hashedPassword,
     email: info.email,
     emailCode: info.code,
   })

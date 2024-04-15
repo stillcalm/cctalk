@@ -1,27 +1,21 @@
-const mqtt = require("mqtt");
+import * as mqtt from "mqtt/dist/mqtt";
 
-const client = mqtt.connect("mqtt://127.0.0.1:1883", {
-  username: "user",
-  password: "123456",
-});
+export const createClient = async (uuid, passwordHash) => {
+  return new Promise((resolve, reject) => {
+    const client = mqtt.connect("ws://127.0.0.1:8083/mqtt", {
+      clientId: "mqtt_" + uuid,
+      username: uuid,
+      password: passwordHash,
+    });
 
-client.on("connect", function () {
-  console.log("服务器连接成功");
-  console.log(client.options.clientId);
-  client.subscribe("text-topic", { qos: 1 }); // 订阅text消息
-});
-
-client.on("message", function (top, message) {
-  console.log("当前topic:", top);
-  console.log(message.toString());
-});
-
-client.on("error", function (error) {
-  console.log(error);
-});
-
-client.on("disconnect", function (packet) {
-  console.log('连接断开');
-});
-
+    client.on("connect", () => {
+      console.log("服务器连接成功");
+      console.log(client.options.clientId);
+      resolve(client);
+    });
+    client.on("error", (error) => {
+      reject(error);
+    });
+  });
+};
 

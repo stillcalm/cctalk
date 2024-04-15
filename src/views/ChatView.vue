@@ -139,6 +139,7 @@ const currentUUID = ref();
 const reportDialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const blacklistDialogVisible = ref(false);
+
 const messageList = reactive([
   {
     uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",

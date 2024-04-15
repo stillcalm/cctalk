@@ -259,7 +259,7 @@ import {
   ChatDotRound,
   Notebook,
   Plus,
-  /*   Search, */
+  Search,
 } from "@element-plus/icons-vue";
 
 const isChat = ref(true);
@@ -366,8 +366,13 @@ const formLabelWidth = "40px";
 const logOut = () => {
   console.log("退出");
   localStorage.removeItem("token");
+  localStorage.removeItem("uuid");
   router.replace({ path: "/login" });
 };
+
+/* onMounted(() => {
+  createClient();
+}); */
 </script>
 
 <style scoped>
