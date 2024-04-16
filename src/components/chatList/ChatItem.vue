@@ -34,7 +34,6 @@ const props = defineProps({
     default: false,
   },
 });
-console.log(props.chatInfo);
 </script>
 
 <style scoped>

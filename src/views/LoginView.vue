@@ -107,6 +107,9 @@ const handleLogin = () => {
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("uuid", res.data.uuid);
+        localStorage.setItem("username", res.data.username);
+        localStorage.setItem("nickname", res.data.nickname);
+        localStorage.setItem("avatarUrl", res.data.avatar_url);
         createClient(res.data.uuid, hashedPassword);
         router.push({ path: "/home" });
       } else {

@@ -305,7 +305,7 @@ const getUserInfo = () => {
       form.name = res.data.username;
       form.nickName = res.data.nickname;
       form.gender = res.data.gender;
-      form.phone = res.data.phone;
+      form.phone = res.data.phone_number;
       form.email = res.data.email;
       form.signature = res.data.signature;
     }
@@ -318,7 +318,7 @@ const handleUpdateUserInfo = () => {
     uuid: localStorage.getItem("uuid"),
     nickname: form.nickName,
     gender: form.gender,
-    phone: form.phone,
+    phone_number: form.phone,
     email: form.email,
     signature: form.signature,
   }).then((res) => {

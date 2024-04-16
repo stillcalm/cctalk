@@ -25,7 +25,7 @@ export const publish = (client, topic, message) => {
       if (error) {
         reject(error);
       } else {
-        resolve();
+        resolve(topic, "发布成功", message);
       }
     });
   });
@@ -37,7 +37,7 @@ export const subscribe = (client, topic) => {
       if (error) {
         reject(error);
       } else {
-        resolve();
+        resolve(topic, "订阅成功");
       }
     });
   });

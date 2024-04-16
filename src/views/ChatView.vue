@@ -135,7 +135,6 @@ import MessageItem from "@/components/MessageItem.vue";
 const published = client.publish("test", "hello", { qos: 1, retain: true }); */
 
 const myUUID = localStorage.getItem("uuid");
-console.log(myUUID);
 /* const store = useStore();
 const friendsList = computed(() => store.state.friendsList); */
 
@@ -150,7 +149,14 @@ const contacts = computed(() => {
   const friendsList = store.state.friendsList;
   return friendsList ? friendsList : [];
 });
-console.log(contacts.value);
+
+/*
+{
+  uuid:
+  message:
+  time:
+} 
+ */
 const messageList = reactive([
   {
     uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",

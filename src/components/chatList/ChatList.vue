@@ -7,11 +7,11 @@
         status: contact.status ? contact.status : 0,
         nickname: contact.userInfo.nickname,
         avatar: contact.userInfo.avatar_url,
-/*         message: contact.latsMessage,
+        /*         message: contact.latsMessage,
         time: contact.latsMessage.time, */
       }"
       :active="currentUUID === contact.uuid"
-      @click="handleChatClick(contact.uuid)"
+      @click="handleChatClick(contact.uuid, contact.chat_uuid)"
     >
     </ChatItem>
   </el-scrollbar>
@@ -26,6 +26,10 @@ const store = useStore();
 let currentUUID = ref(null);
 const emits = defineEmits(["handleChatClick"]);
 
+const contacts = computed(() => {
+  const friendsList = store.state.friendsList;
+  return friendsList ? friendsList : [];
+});
 /*
 {
   uuid: "9ef25779-f0b9-48ae-b833-f4853f1dd908",
@@ -39,20 +43,25 @@ const emits = defineEmits(["handleChatClick"]);
 } 
  */
 
-const handleChatClick = (uuid) => {
+const handleChatClick = (uuid, chat_uuid) => {
+  console.log("handleChat", chat_uuid);
   currentUUID.value = uuid;
   emits("handleChatClick", currentUUID.value);
-  getHistoryMessages();
+  getHistoryMessages(uuid, chat_uuid);
 };
 
-const getHistoryMessages = async () => {
-  // 获取历史消息
+const getHistoryMessages = async (uuid, chat_uuid) => {
+  try {
+    await store.dispatch("fetchHistoryMessages", { uuid, chatUuid: chat_uuid }); // 修改这里的参数传递方式，使用对象解构更明确
+    console.log("History messages fetched successfully"); // 在数据成功获取后打印消息
+    // 如果需要，您可以在这里获取更新后的数据
+    // const updatedFriendsList = store.state.friendsList;
+    // ...使用 updatedFriendsList 做其他操作
+  } catch (error) {
+    console.error("Error fetching history messages:", error); // 捕获并打印错误
+    // 在这里可以添加错误处理逻辑，比如通知用户或重试请求
+  }
 };
-
-const contacts = computed(() => {
-  const friendsList = store.state.friendsList;
-  return friendsList ? friendsList : [];
-});
 </script>
 
 <style scoped>
