@@ -19,3 +19,26 @@ export const createClient = async (uuid, passwordHash) => {
   });
 };
 
+export const publish = (client, topic, message) => {
+  return new Promise((resolve, reject) => {
+    client.publish(topic, message, (error) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
+export const subscribe = (client, topic) => {
+  return new Promise((resolve, reject) => {
+    client.subscribe(topic, (error) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+};

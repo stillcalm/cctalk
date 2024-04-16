@@ -244,7 +244,8 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
+import { useStore } from "vuex";
 import router from "../router";
 import ChatView from "./ChatView.vue";
 import ContactView from "./ContactView.vue";
@@ -282,6 +283,8 @@ const form = reactive({
   desc: "",
 });
 const searchedUser = reactive({});
+
+const store = useStore();
 
 const handleSelect = (key) => {
   if (key === "chat") {
@@ -370,9 +373,25 @@ const logOut = () => {
   router.replace({ path: "/login" });
 };
 
-/* onMounted(() => {
-  createClient();
-}); */
+/* const handleGetFriendList = () => {
+  getFriendList({
+    uuid: localStorage.getItem("uuid"),
+  }).then((res) => {
+    // 使用 splice 触发响应式更新
+    contacts.splice(0, contacts.length, ...res.data.friendsList);
+
+    store.commit("updateFriendsUuidList", res.data.friendsList);
+  });
+}; */
+
+onMounted(async () => {
+  try {
+    // 调用 action 来获取并设置 friendsList
+    await store.dispatch("fetchFriendsList");
+  } catch (error) {
+    console.error("Error fetching friends list in component:", error);
+  }
+});
 </script>
 
 <style scoped>

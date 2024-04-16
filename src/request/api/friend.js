@@ -8,7 +8,7 @@ export const addFriendByUsername = (data) => {
   });
 };
 
-export const getFriendList = (data) => {
+export const getFriendsList = (data) => {
   return serviceAxios({
     url: `/friend/getFriends`,
     method: "get",

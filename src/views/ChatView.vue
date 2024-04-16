@@ -1,7 +1,8 @@
 <template>
   <el-container>
     <el-aside class="left-aside">
-      <ChatList @handleChatClick="chatListClick"></ChatList>
+      <ChatList @handleChatClick="chatListClick"
+      :chatsList="contacts"></ChatList>
     </el-aside>
     <el-container v-if="currentUUID">
       <el-container
@@ -22,7 +23,7 @@
               v-for="mes in messageList"
               :key="mes.uuid"
               :content="mes.message"
-              :isSelfMessage="mes.uuid === myUUID"
+              :isSelfMessage="mes.uuid !== myUUID"
             ></MessageItem>
           </el-scrollbar>
         </el-main>
@@ -125,7 +126,8 @@
 
 <script setup>
 /* import mqtt from "mqtt"; */
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
+import { useStore } from "vuex";
 import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
 import MessageItem from "@/components/MessageItem.vue";
 
@@ -133,77 +135,86 @@ import MessageItem from "@/components/MessageItem.vue";
 const published = client.publish("test", "hello", { qos: 1, retain: true }); */
 
 const myUUID = localStorage.getItem("uuid");
-//console.log(myUUID);
+console.log(myUUID);
+/* const store = useStore();
+const friendsList = computed(() => store.state.friendsList); */
+
+const store = useStore();
 let messageInput = ref("");
 const currentUUID = ref();
 const reportDialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const blacklistDialogVisible = ref(false);
 
+const contacts = computed(() => {
+  const friendsList = store.state.friendsList;
+  return friendsList ? friendsList : [];
+});
+console.log(contacts.value);
 const messageList = reactive([
   {
-    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message:
       "我认为学生最重要的任务是学习和成长。这不仅仅包括专业知识的学习，还涵盖个人综合素质的提升。在学习过程中，我们需要培养自己的批判性思维、创新能力、团队协作能力等多方面的能力，以适应未来社会的发展需求。同时，我们也需要注重身心健康，保持积极的心态和良好的生活习惯，为未来的工作和生活打下坚实的基础。",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message: "Hi, I'm fine, thank you.",
     time: "12:00",
   },
   {
-    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     message: "How's it going?",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "57774bf8-bb17-4519-b9d5-becbbf61c25a",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "d1f11e3d-a002-41f4-88b6-216a5d843df8",
     message: "I'm good, thanks.",
     time: "12:00",
   },
   {
-    uuid: "22222222",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     message: "I'm good, thanks.",
     time: "12:00",
   },
@@ -250,7 +261,7 @@ const sendMessage = (e) => {
 } */
 const chatsInfo = reactive([
   {
-    uuid: "9ef25779-f0b9-48ae-b833-f4853f1dd908",
+    uuid: "04fb4516-1847-4af4-8699-fe3285d1dff3",
     username: "wean1",
     nickname: "吴志浩",
     avatar: "https://joeschmoe.io/api/v1/random",
@@ -261,7 +272,7 @@ const chatsInfo = reactive([
     ],
   },
   {
-    uuid: "a7554f91-63a4-4fa4-b426-40d3fba3a4d2",
+    uuid: "274e4357-e60c-47f8-b04a-f2798e53a003",
     username: "wean2",
     nickname: "wean2",
     avatar: "https://joeschmoe.io/api/v1/random",
@@ -279,6 +290,7 @@ const chatsInfo = reactive([
   background-color: #f6f8fb;
 }
 .header-wrapper {
+  width: 500px;
   border-bottom: 1px solid #e8e8e8;
   display: flex;
   align-items: center;

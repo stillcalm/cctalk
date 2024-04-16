@@ -1,11 +1,11 @@
 <template>
-  <div :class="{ active: props.active }">
+  <div v-if="chatInfo.status === 'confirmed'" :class="{ active: props.active }">
     <div class="list-item">
       <div class="left">
         <div class="user-icon">
           <div>
             <el-avatar>
-              {{ chatInfo.nickname.slice(0, 1)}}
+              {{ chatInfo.nickname.slice(0, 1) }}
             </el-avatar>
           </div>
         </div>
@@ -25,15 +25,16 @@
 
 <script setup>
 const props = defineProps({
-  chatInfo:{
+  chatInfo: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   active: {
     type: Boolean,
     default: false,
   },
 });
+console.log(props.chatInfo);
 </script>
 
 <style scoped>

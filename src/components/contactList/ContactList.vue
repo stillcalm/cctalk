@@ -3,7 +3,7 @@
     <ContactItem
       v-for="contact in contacts"
       :key="contact.uuid"
-      :nickname="contact.nickname"
+      :nickname="contact.userInfo.nickname"
       :active="current === contact.uuid"
       @click="handleContactClick(contact.uuid)"
     >
@@ -13,24 +13,23 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const emits = defineEmits(["handleContactClick"]);
 let current = ref(null);
-
-const props = defineProps({
-  friendsList: {
-    type: Array,
-    default: () => [],
-  },
-});
-let contacts = reactive(props.friendsList);
 
 const handleContactClick = (uuid) => {
   current.value = uuid;
   emits("handleContactClick", current.value);
 };
 
+const contacts = computed(() => {
+  const friendsList = store.state.friendsList;
+  return friendsList ? friendsList : [];
+});
 </script>
 
 <style scoped>

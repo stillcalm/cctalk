@@ -3,7 +3,6 @@
     <el-aside class="left-aside">
       <ContactList
         @handleContactClick="FatherClick"
-        :friendsList="contacts"
       ></ContactList>
     </el-aside>
     <el-container v-if="current">
@@ -17,7 +16,7 @@
           <el-header class="user-info-container">
             <div>
               <el-avatar>
-                {{ contact.nickname.slice(0, 4) }}
+                {{ contact.userInfo.nickname.slice(0, 4) }}
               </el-avatar>
             </div>
 
@@ -26,13 +25,17 @@
               src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
             /> -->
             <div class="right-container">
-              <div>{{ contact.nickname }}</div>
-              <div>{{ contact.username }}</div>
+              <div>{{ contact.userInfo.nickname }}</div>
+              <div>{{ contact.userInfo.username }}</div>
             </div>
           </el-header>
           <el-main>
             <div class="signature">
-              {{ contact.signature ? contact.signature : "暂无签名" }}
+              {{
+                contact.userInfo.signature
+                  ? contact.userInfo.signature
+                  : "暂无签名"
+              }}
             </div>
           </el-main>
         </el-container>
@@ -45,33 +48,32 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from "vue";
-import { getFriendList } from "@/request/api/friend";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
 
-const current = ref();
+const store = useStore();
+let current = ref(null);
 
 const FatherClick = (val) => {
   current.value = val;
 };
 
-let contacts = reactive([]);
-
-const handleGetFriendList = () => {
-  getFriendList({
-    uuid: localStorage.getItem("uuid"),
-  }).then((res) => {
-    // 使用 splice 触发响应式更新
-    contacts.splice(0, contacts.length, ...res.data.friendsList);
-  });
-};
-
-onMounted(() => {
-  handleGetFriendList();
+/* 
+{
+  uuid: "1",
+  username: "123456",
+  nickname: "123456",
+  signature: "123456",
+}
+ */
+const contacts = computed(() => {
+  const friendsList = store.state.friendsList;
+  return friendsList ? friendsList : [];
 });
 </script>
 
 <style scoped>
-.user-info-container{
+.user-info-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
