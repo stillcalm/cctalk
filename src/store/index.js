@@ -8,9 +8,8 @@ import {
 const store = createStore({
   state() {
     return {
-      // 定义用于存储接口数据的 state
       friendsList: [],
-      chatsList: [],
+      chatExistingMessages: {},
     };
   },
   getters: {
@@ -20,9 +19,18 @@ const store = createStore({
   mutations: {
     UPDATE_FRIENDS_LIST(state, friendsList) {
       state.friendsList = friendsList;
+      console.log(friendsList);
     },
-    UPDATE_FRIENDS_WITH_MESSAGES(state, updatedFriendsList) {
-      state.friendsList = updatedFriendsList;
+    UPDATE_CHAT_EXISTING_MESSAGES(state, { chatUuid, newMessages }) {
+      // 为指定的chatUuid更新或创建existingMessages集合
+      if (!state.chatExistingMessages[chatUuid]) {
+        state.chatExistingMessages[chatUuid] = new Map();
+      }
+      const existingMessagesMap = state.chatExistingMessages[chatUuid];
+      newMessages.forEach((msg) => {
+        const key = `${msg.created_at}_${msg.sender_uuid}_${msg.receiver_uuid}`;
+        existingMessagesMap.set(key, true);
+      });
     },
   },
   actions: {
@@ -33,8 +41,7 @@ const store = createStore({
         }
         const uuid = localStorage.getItem("uuid");
         const fList = await getFriendsList({ uuid: uuid });
-        commit("UPDATE_FRIENDS_LIST", fList.data.friendsList); // 提交 mutation 来更新朋友列表状态
-
+        commit("UPDATE_FRIENDS_LIST", fList.data.friendsList);
         const chatUuidList = fList.data.friendsList.map(
           (friend) => friend.chat_uuid
         );
@@ -51,23 +58,33 @@ const store = createStore({
         console.error("Error fetching friend list:", error);
       }
     },
-    async fetchHistoryMessages({ commit, state }, uuid, chatUuid) {
-      const messagesList = await getMessagesByChatUuid(chatUuid); // 假设这个函数返回了正确的消息列表
-      const updatedFriendsList = state.friendsList.map((friend) => {
-        if (friend.uuid === uuid) {
-          // 如果找到对应 uuid 的朋友，将消息添加到他们的消息列表中
-          return {
-            ...friend,
-            messages: [
-              ...(friend.messages || []),
-              ...messagesList.data.messages,
-            ], // 假设 messages.data.messages 是从 API 返回的消息数组
-          };
-        }
-        return friend; // 如果不是对应的朋友，则返回原样
-      });
-      console.log(updatedFriendsList.messages);
-      commit("UPDATE_FRIENDS_WITH_MESSAGES", updatedFriendsList); // 提交新的更新操作
+    async fetchHistoryMessages({ commit, state }, chatInfo) {
+      try {
+        const messagesList = await getMessagesByChatUuid(chatInfo.chatUuid);
+        const newMessages = messagesList.data.messages.filter((msg) => {
+          const key = `${msg.created_at}_${msg.sender_uuid}_${msg.receiver_uuid}`;
+          // 使用chatExistingMessages对象来检查消息是否已存在
+          const existingMessagesMap =
+            state.chatExistingMessages[chatInfo.chatUuid] || new Map();
+          return !existingMessagesMap.has(key);
+        });
+        const updatedFriendsList = state.friendsList.map((friend) => {
+          if (friend.uuid === chatInfo.uuid) {
+            return {
+              ...friend,
+              messages: [...(friend.messages || []), ...newMessages],
+            };
+          }
+          return friend;
+        });
+        commit("UPDATE_FRIENDS_LIST", updatedFriendsList);
+        commit("UPDATE_CHAT_EXISTING_MESSAGES", {
+          chatUuid: chatInfo.chatUuid,
+          newMessages,
+        });
+      } catch (error) {
+        console.error("Error fetching history messages:", error);
+      }
     },
   },
 });

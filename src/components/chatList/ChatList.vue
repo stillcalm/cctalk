@@ -23,7 +23,8 @@ import { ref, computed } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
-let currentUUID = ref(null);
+const currentUUID = ref(null);
+const currentChatUuid = ref(null);
 const emits = defineEmits(["handleChatClick"]);
 
 const contacts = computed(() => {
@@ -44,8 +45,9 @@ const contacts = computed(() => {
  */
 
 const handleChatClick = (uuid, chat_uuid) => {
-  console.log("handleChat", chat_uuid);
+  //console.log("handleChat", chat_uuid);
   currentUUID.value = uuid;
+  currentChatUuid.value = chat_uuid
   emits("handleChatClick", currentUUID.value);
   getHistoryMessages(uuid, chat_uuid);
 };
@@ -59,9 +61,9 @@ const getHistoryMessages = async (uuid, chat_uuid) => {
     // ...使用 updatedFriendsList 做其他操作
   } catch (error) {
     console.error("Error fetching history messages:", error); // 捕获并打印错误
-    // 在这里可以添加错误处理逻辑，比如通知用户或重试请求
   }
 };
+
 </script>
 
 <style scoped>
