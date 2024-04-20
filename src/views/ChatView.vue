@@ -25,7 +25,7 @@
               v-for="mes in chat.messages"
               :key="mes.sender_uuid"
               :content="mes.content"
-              :isSelfMessage="mes.sender_uuid === myUUID"
+              :isSelfMessage="mes.sender_uuid !== myUUID"
             ></MessageItem>
           </el-scrollbar>
         </el-main>
@@ -38,7 +38,7 @@
             resize="none"
             :rows="2"
             placeholder="Enter 发送信息,Shift + Enter 换行"
-            @keyup.enter="sendMessage"
+            @keyup.enter="handleSendMessage"
           >
           </el-input>
           <div class="function" @click="handleInputSelect">
@@ -127,61 +127,33 @@
 </template>
 
 <script setup>
-/* import mqtt from "mqtt"; */
-import { ref, computed } from "vue";
+import { ref, computed, onUnmounted, watch } from "vue";
 import { useStore } from "vuex";
+import { v4 as uuidv4 } from "uuid";
+import { createClient, publish, subscribe } from "../request/mqtt";
 import { Tools, FolderRemove, Sunny, Picture } from "@element-plus/icons-vue";
-import MessageItem from "@/components/MessageItem.vue";
-
-/* let client = mqtt.connect("ws://localhost", );
-const published = client.publish("test", "hello", { qos: 1, retain: true }); */
+import { sendMessage } from "../request/api/chats";
 
 const myUUID = localStorage.getItem("uuid");
-/* const store = useStore();
-const friendsList = computed(() => store.state.friendsList); */
 
 const store = useStore();
 let messageInput = ref("");
 const currentUUID = ref();
+const currentChatUuid = ref();
+const client = ref();
 const reportDialogVisible = ref(false);
 const deleteDialogVisible = ref(false);
 const blacklistDialogVisible = ref(false);
+let hasSubscribed = false;
 
 const contacts = computed(() => {
   const friendsList = store.state.friendsList;
   return friendsList ? friendsList : [];
 });
-console.log(contacts.value);
 
-/* const messageList = computed(() => {
-  const messageList = [];
-  const currentChat = contacts.value.find(
-    (chat) => chat.uuid === currentUUID.value
-  );
-  if (!currentChat) return messageList;
-
-  if (currentChat) {
-    messageList.push({
-      uuid: currentChat.uuid,
-      message: currentChat.message,
-      time: currentChat.time,
-    });
-  }
-  return messageList;
-}); */
-
-/*
-{
-  uuid:
-  message:
-  time:
-} 
- */
-
-
-const chatListClick = (val) => {
+const chatListClick = (val, chatVal) => {
   currentUUID.value = val;
-  //console.log(currentUUID.value);
+  currentChatUuid.value = chatVal;
 };
 
 const handleCommand = (command) => {
@@ -196,34 +168,107 @@ const handleCommand = (command) => {
   }
 };
 
-const sendMessage = (e) => {
+async function initClient() {
+  try {
+    const uuid = localStorage.getItem("uuid");
+    const token = localStorage.getItem("token");
+    const res = await createClient(uuid, token);
+    client.value = res;
+
+    // 监听消息
+    client.value.on("message", (topic, message) => {
+      const paredMes = JSON.parse(message.toString()) || {};
+      console.log("收到消息：", topic, paredMes.content);
+
+      store.commit("ADD_MESSAGE", {
+        message: paredMes,
+      });
+    });
+    
+    handleSubscribe();
+
+    // 订阅服务
+    //client.value.subscribe("", { qos: 1 });
+  } catch (err) {
+    console.error("Failed to connect client", err);
+  }
+}
+
+function handleSubscribe() {
+  try {
+    console.log(contacts.value);
+    for (let i = 0; i < contacts.value.length; i++) {
+      subscribe(client.value, `chat/${contacts.value[i].chat_uuid}`);
+    }
+  } catch (err) {
+    console.error("Failed to subscribe", err);
+  }
+}
+
+initClient();
+
+watch(contacts, (newValue) => {
+  // 检查 contacts 数组是否为空，并且之前没有订阅过
+  if (newValue.length > 0 && !hasSubscribed && client.value) {  
+    handleSubscribe();  
+    hasSubscribed = true; // 标记为已订阅  
+  }  
+}, {  
+  deep: true, // 因为我们关心数组内容的变化，所以使用深度监听  
+  immediate: false // 不立即执行回调，只在contacts变化时执行  
+}); 
+
+const handleSendMessage = async (e) => {
+  console.log("client11", client.value);
   if (e.code === "Enter") {
     if (!e.isComposing && !e.shiftKey) {
-      //e.preventDefault();
+      // 阻止默认行为（如果需要）
+      // e.preventDefault();
       const mes = messageInput.value;
       messageInput.value = "";
-      if (mes.length > 0) {
-        store.commit("addMessage", {
-          uuid: currentUUID.value,
-          message: mes,
-          time: "12:00",
-        })
-/*         .push({
-          uuid: "22222222",
-          message: mes,
-          time: "12:00",
+      if (mes.trim().length > 0) {
+        const mes_uuid = uuidv4();
+        const time = new Date().toLocaleTimeString();
+        const MessageItem = {
+          chat_uuid: currentChatUuid.value,
+          mes_uuid: mes_uuid,
+          sender_uuid: myUUID,
+          receiver_uuid: currentUUID.value,
+          content: mes,
+          created_at: time,
+        };
+/*         store.commit("ADD_MESSAGE", {
+          message: MessageItem,
+        }); */
+
+        await publish(
+          client.value,
+          `chat/${currentChatUuid.value}`,
+          JSON.stringify(MessageItem)
+        )
+          .then(() => {
+            console.log("send success");
+          })
+          .catch((err) => {
+            console.log("err", err);
+          });
+
+        await sendMessage(MessageItem).catch((err) => {
+          console.log("err", err);
         });
- */      }
+      }
     } else {
+      // 如果正在输入，按下 Enter 键且是 Shift+Enter，则在输入框中插入换行符
       messageInput.value += "\n";
     }
   }
 };
 
-/* const newLine = (event) => {
-  event.preventDefault();  
-} */
-
+onUnmounted(() => {
+  if (client.value && client.value.connected) {
+    client.value.end(); // 断开连接
+  }
+});
 </script>
 
 <style scoped>

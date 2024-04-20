@@ -48,7 +48,7 @@ const handleChatClick = (uuid, chat_uuid) => {
   //console.log("handleChat", chat_uuid);
   currentUUID.value = uuid;
   currentChatUuid.value = chat_uuid
-  emits("handleChatClick", currentUUID.value);
+  emits("handleChatClick", currentUUID.value, currentChatUuid.value);
   getHistoryMessages(uuid, chat_uuid);
 };
 

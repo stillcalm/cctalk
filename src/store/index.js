@@ -19,18 +19,33 @@ const store = createStore({
   mutations: {
     UPDATE_FRIENDS_LIST(state, friendsList) {
       state.friendsList = friendsList;
-      console.log(friendsList);
+      console.log("fL",friendsList);
     },
     UPDATE_CHAT_EXISTING_MESSAGES(state, { chatUuid, newMessages }) {
-      // 为指定的chatUuid更新或创建existingMessages集合
       if (!state.chatExistingMessages[chatUuid]) {
-        state.chatExistingMessages[chatUuid] = new Map();
+        state.chatExistingMessages[chatUuid] = new Set();
       }
-      const existingMessagesMap = state.chatExistingMessages[chatUuid];
       newMessages.forEach((msg) => {
-        const key = `${msg.created_at}_${msg.sender_uuid}_${msg.receiver_uuid}`;
-        existingMessagesMap.set(key, true);
+        state.chatExistingMessages[chatUuid].add(msg.mes_uuid);
       });
+    },
+    ADD_MESSAGE(state, {  message }) {
+      console.log("add message",message);
+      if (!state.chatExistingMessages[message.chat_uuid]) {
+        state.chatExistingMessages[message.chat_uuid] = new Set();
+      }
+      state.chatExistingMessages[message.chat_uuid].add(message.mes_uuid);
+         
+      const updatedFriendsList = state.friendsList.map((friend) => {
+        if (friend.chat_uuid === message.chat_uuid) {
+          return {
+            ...friend,
+            messages: [...(friend.messages || []), message],
+          };
+        }
+        return friend;
+      });
+      state.friendsList = updatedFriendsList;
     },
   },
   actions: {
@@ -41,11 +56,9 @@ const store = createStore({
         }
         const uuid = localStorage.getItem("uuid");
         const fList = await getFriendsList({ uuid: uuid });
-        commit("UPDATE_FRIENDS_LIST", fList.data.friendsList);
         const chatUuidList = fList.data.friendsList.map(
           (friend) => friend.chat_uuid
         );
-        console.log(chatUuidList);
         const cList = await getChatsByChatUuid(chatUuidList);
         const friendsList = fList.data.friendsList.map((friend, index) => {
           return {
@@ -53,7 +66,7 @@ const store = createStore({
             chat: cList.data.chats[index],
           };
         });
-        console.log(friendsList);
+        commit("UPDATE_FRIENDS_LIST", friendsList);
       } catch (error) {
         console.error("Error fetching friend list:", error);
       }
@@ -62,11 +75,9 @@ const store = createStore({
       try {
         const messagesList = await getMessagesByChatUuid(chatInfo.chatUuid);
         const newMessages = messagesList.data.messages.filter((msg) => {
-          const key = `${msg.created_at}_${msg.sender_uuid}_${msg.receiver_uuid}`;
-          // 使用chatExistingMessages对象来检查消息是否已存在
-          const existingMessagesMap =
-            state.chatExistingMessages[chatInfo.chatUuid] || new Map();
-          return !existingMessagesMap.has(key);
+          const existingMessagesSet =
+            state.chatExistingMessages[chatInfo.chatUuid] || new Set();
+          return !existingMessagesSet.has(msg.mes_uuid);
         });
         const updatedFriendsList = state.friendsList.map((friend) => {
           if (friend.uuid === chatInfo.uuid) {

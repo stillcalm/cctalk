@@ -66,7 +66,6 @@ import { login } from "../request/api/user";
 import { debounce } from "../utils/utils";
 import { isAccount, passwordValidate } from "../utils/validate";
 import sha256 from "js-sha256";
-import { createClient } from "../request/mqtt";
 
 const checked1 = ref(false);
 const checked2 = ref(false);
@@ -110,7 +109,6 @@ const handleLogin = () => {
         localStorage.setItem("username", res.data.username);
         localStorage.setItem("nickname", res.data.nickname);
         localStorage.setItem("avatarUrl", res.data.avatar_url);
-        createClient(res.data.uuid, hashedPassword);
         router.push({ path: "/home" });
       } else {
         handleErrorMessage("意外错误");

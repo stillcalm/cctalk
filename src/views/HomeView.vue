@@ -373,17 +373,6 @@ const logOut = () => {
   router.replace({ path: "/login" });
 };
 
-/* const handleGetFriendList = () => {
-  getFriendList({
-    uuid: localStorage.getItem("uuid"),
-  }).then((res) => {
-    // 使用 splice 触发响应式更新
-    contacts.splice(0, contacts.length, ...res.data.friendsList);
-
-    store.commit("updateFriendsUuidList", res.data.friendsList);
-  });
-}; */
-
 onMounted(async () => {
   try {
     // 调用 action 来获取并设置 friendsList
